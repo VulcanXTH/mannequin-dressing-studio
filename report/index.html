@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ผลการทดสอบระบบ — Mannequin Dressing Studio</title>
+<style>
+  :root{
+    --bg:#1C1B20; --panel:#26252B; --card:#2F2E34; --line:#3B3A42;
+    --tx:#ECEAEF; --tx2:#A6A2AF; --tx3:#7C7887;
+    --rose:#D98E96; --rose-deep:#C4747D; --rose-ink:#2B1216;
+    --ok:#7FC98F; --busy:#E0B26B; --bad:#E07A7A;
+    font-size:15.5px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai",sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.6}
+  .wrap{max-width:1080px;margin:0 auto;padding:44px 20px 80px;display:flex;flex-direction:column;gap:40px}
+
+  header .date{font-size:.78rem;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase}
+  header h1{margin:6px 0 10px;font-size:1.7rem;letter-spacing:-.01em;text-wrap:balance}
+  header p{margin:0;color:var(--tx2);max-width:64ch}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .chip{font-size:.78rem;padding:5px 12px;border-radius:999px;background:rgba(127,201,143,.12);color:var(--ok);font-weight:600}
+  .chip.warn{background:rgba(224,178,107,.12);color:var(--busy)}
+
+  h2{margin:0;font-size:1.15rem;letter-spacing:.01em}
+  h2 small{display:block;font-weight:400;color:var(--tx2);font-size:.82rem;margin-top:4px}
+  section{display:flex;flex-direction:column;gap:18px}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .kpi .n{font-size:1.7rem;font-weight:750;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .kpi .t{font-size:.75rem;color:var(--tx2);margin-top:4px;line-height:1.5}
+  .kpi.ok .n{color:var(--ok)} .kpi.rose .n{color:var(--rose)} .kpi.busy .n{color:var(--busy)}
+
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+  .shot{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .shot img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+  .shot .cap{padding:10px 13px;font-size:.78rem;color:var(--tx2)}
+  .shot .cap b{color:var(--tx);display:block;font-size:.82rem;margin-bottom:2px}
+  .shot.input{outline:2px dashed #4A4852;outline-offset:-2px}
+  .tag{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:999px;margin-bottom:6px}
+  .tag.in{background:rgba(139,135,148,.18);color:var(--tx2)}
+  .tag.out{background:rgba(217,142,150,.15);color:var(--rose)}
+
+  .arrow-note{font-size:.8rem;color:var(--tx3);text-align:center}
+
+  /* compare slider */
+  .cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+  .cmp{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .cmp h3{margin:0;font-size:.9rem}
+  .cmp .frame{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:3/4;user-select:none}
+  .cmp .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .cmp .topimg{clip-path:inset(0 50% 0 0)}
+  .cmp .bar{position:absolute;top:0;bottom:0;width:2px;background:#fff;left:50%;pointer-events:none;box-shadow:0 0 8px rgba(0,0,0,.6)}
+  .cmp .bar::after{content:'◂ ▸';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;color:#222;font-size:.6rem;padding:4px 6px;border-radius:999px;white-space:nowrap}
+  .cmp input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+  .cmp .lbl-l,.cmp .lbl-r{position:absolute;top:10px;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;pointer-events:none}
+  .cmp .lbl-l{left:10px}.cmp .lbl-r{right:10px}
+  .cmp .note{font-size:.76rem;color:var(--tx2);margin:0}
+  .cmp .note b{color:var(--tx)}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .timeline{display:flex;flex-direction:column;gap:0;margin:6px 0 0}
+  .tl{display:grid;grid-template-columns:22px 1fr;gap:12px}
+  .tl .dot{width:10px;height:10px;border-radius:50%;background:var(--rose);margin:6px auto 0;position:relative}
+  .tl:not(:last-child) .dot::after{content:'';position:absolute;top:12px;left:4px;width:2px;height:calc(100% + 26px);background:var(--line)}
+  .tl .txt{padding-bottom:22px;font-size:.85rem;color:var(--tx2)}
+  .tl .txt b{color:var(--tx)}
+  .tl.ok .dot{background:var(--ok)}
+  .tl.crash .dot{background:var(--bad)}
+
+  table{width:100%;border-collapse:collapse;font-size:.85rem}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3)}
+  td{color:var(--tx2)} td b{color:var(--tx)}
+  td.num{font-variant-numeric:tabular-nums}
+  .hl{background:rgba(217,142,150,.07)}
+  .table-scroll{overflow-x:auto}
+
+  .len-viewer{display:grid;grid-template-columns:minmax(240px,340px) 1fr;gap:22px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .len-viewer .lv-frame{border-radius:10px;overflow:hidden;aspect-ratio:3/4;position:relative}
+  .len-viewer .lv-frame img{width:100%;height:100%;object-fit:cover;display:block}
+  .lv-side{display:flex;flex-direction:column;gap:14px}
+  .lv-side h3{margin:0;font-size:.95rem}
+  .lv-pct{font-size:2.2rem;font-weight:750;color:var(--rose);letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+  .lv-pct small{display:block;font-size:.75rem;font-weight:400;color:var(--tx3);letter-spacing:0;margin-top:6px}
+  .lv-side input[type=range]{width:100%;accent-color:var(--rose);height:26px;margin:0}
+  .lv-ticks{display:flex;justify-content:space-between;font-size:.62rem;color:var(--tx3)}
+  .lv-note{font-size:.76rem;color:var(--tx2);margin:0}
+  @media (max-width:640px){ .len-viewer{grid-template-columns:1fr} }
+  .tones{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+  .tones figure{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .tones img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+  .tones figcaption{padding:8px 10px;font-size:.72rem;color:var(--tx2);text-align:center}
+  .tones figcaption b{color:var(--tx);display:block;font-size:.76rem}
+  .rec{border-left:3px solid var(--rose);padding:4px 0 4px 16px}
+  .rec p{margin:0 0 8px;color:var(--tx2);font-size:.88rem}
+  .rec p:last-child{margin:0}
+  .rec b{color:var(--tx)}
+
+  footer{color:var(--tx3);font-size:.75rem;text-align:center;border-top:1px solid var(--line);padding-top:20px}
+  @media (max-width:640px){ header h1{font-size:1.35rem} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="date">Test Report · 6–7 กรกฎาคม 2026</div>
+    <h1>ผลการทดสอบระบบเจนภาพหุ่นลองชุด</h1>
+    <p>ทดสอบด้วยรูปหุ่นและเสื้อผ้าจริงจากโฟลเดอร์ที่ส่งมา ผ่าน GPT-Image-2 บน FAL.AI — ครอบคลุมคุณภาพการเจนทุกมุมภาพ การเทียบระดับคุณภาพ 2 ระดับ และการทดสอบระบบคิวจำนวนมากพร้อมจำลองเหตุการณ์ปิดโปรแกรม/ไฟดับกลางคัน</p>
+    <div class="chips">
+      <span class="chip">✓ คุณภาพการเจน — ผ่าน</span>
+      <span class="chip">✓ มุม Front / Back / Side — ผ่าน</span>
+      <span class="chip">✓ Bulk 50 รูป + กู้งานหลังปิดโปรแกรม — ผ่าน</span>
+      <span class="chip">✓ เครื่องมือแก้รูป (Editor) — ผ่าน</span>
+      <span class="chip">✓ โปรแกรมติดตั้ง macOS + Windows — พร้อม</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>ตัวเลขสำคัญ</h2>
+    <div class="kpis">
+      <div class="kpi ok"><div class="n">50/50</div><div class="t">Bulk test สำเร็จครบ ไม่มีรูปเฟล ไม่ต้อง retry</div></div>
+      <div class="kpi ok"><div class="n">100%</div><div class="t">กู้งานหลังปิดโปรแกรมกลางคัน — ทำต่อเองครบ ไม่เจนซ้ำ ไม่เสียเงินซ้ำ</div></div>
+      <div class="kpi rose"><div class="n">~18–20</div><div class="t">รูป/นาที (คาดการณ์ที่ความเร็วสูงสุดของระบบ) — รันข้ามคืนได้ 17,000+ รูป</div></div>
+      <div class="kpi busy"><div class="n">฿0.2</div><div class="t">ต่อรูปที่คุณภาพ Low · High อยู่ที่ ฿1.5/รูป</div></div>
+      <div class="kpi rose"><div class="n">54–120</div><div class="t">วินาที/รูป (เจนพร้อมกันได้สูงสุด 30 รูป)</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>1 · ผลการเจน — ชุดราตรี (Front / Back / Side)<small>รูปหุ่นเปล่า + รูปชุดต้นฉบับ → หุ่นใส่ชุดครบ 3 มุม เงาสะท้อนในกระจกเปลี่ยนตามจริง</small></h2>
+    <div class="gallery">
+      <div class="shot input"><img src="images/in_mannequin_dress.jpg" alt="หุ่นเปล่า"><div class="cap"><span class="tag in">INPUT</span><b>รูปหุ่นเปล่า</b>ถ่ายจาก iPhone (ระบบแปลง HEIC + แก้การหมุนให้อัตโนมัติ)</div></div>
+      <div class="shot input"><img src="images/in_garment_dress.jpg" alt="ชุดต้นฉบับ"><div class="cap"><span class="tag in">INPUT</span><b>ชุดต้นฉบับ</b>รูปหน้า-หลังบนหุ่นร้าน</div></div>
+      <div class="shot"><img src="images/out_dress_front_high.jpg" alt="ผลเจนด้านหน้า"><div class="cap"><span class="tag out">OUTPUT</span><b>Front — ด้านหน้า</b>เลื่อม ruching และลายผ้าครบ กระจกสะท้อนชุดตาม</div></div>
+      <div class="shot"><img src="images/out_dress_back.jpg" alt="ผลเจนด้านหลัง"><div class="cap"><span class="tag out">OUTPUT</span><b>Back — หมุน 180°</b>เห็นซิปหลัง กระจกสะท้อนด้านหน้าชุด</div></div>
+      <div class="shot"><img src="images/out_dress_side.jpg" alt="ผลเจนด้านข้าง"><div class="cap"><span class="tag out">OUTPUT</span><b>Side — ตามองศารูปตัวอย่าง</b>หันข้างเต็มตัว หน้าชุดเข้ากระจก ตรงเป๊ะกับ ref ที่ส่งมา</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2 · ผลการเจน — เสื้อ<small>เสื้อ 2 แบบบนหุ่นตัวเสื้อ</small></h2>
+    <div class="gallery">
+      <div class="shot input"><img src="images/in_garment_shirt1.jpg" alt="เสื้อ 1 ต้นฉบับ"><div class="cap"><span class="tag in">INPUT</span><b>เสื้อ 1 ต้นฉบับ</b>รูป flat-lay พื้นขาว</div></div>
+      <div class="shot"><img src="images/out_shirt1_front.jpg" alt="ผลเจนเสื้อ 1"><div class="cap"><span class="tag out">OUTPUT</span><b>เสื้อ 1 บนหุ่น</b>ลูกไม้ มุก และโบว์ผูกคอครบ</div></div>
+      <div class="shot input"><img src="images/in_garment_shirt2.jpg" alt="เสื้อ 2 ต้นฉบับ"><div class="cap"><span class="tag in">INPUT</span><b>เสื้อ 2 ต้นฉบับ</b></div></div>
+      <div class="shot"><img src="images/out_shirt2_high.jpg" alt="ผลเจนเสื้อ 2"><div class="cap"><span class="tag out">OUTPUT</span><b>เสื้อ 2 บนหุ่น</b>ลายดอกและทรงตรงต้นฉบับ</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>3 · เทียบคุณภาพ Low ฿0.2 vs High ฿1.5<small>ลากเส้นแบ่งซ้าย-ขวาเพื่อเปรียบเทียบ (ซ้าย = Low · ขวา = High) — รูปเดียวกัน เสื้อเดียวกัน ต่างแค่ระดับคุณภาพ</small></h2>
+    <div class="cmp-grid">
+      <div class="cmp">
+        <h3>ชุดราตรี — ด้านหน้า</h3>
+        <div class="frame">
+          <img src="images/out_dress_front_high.jpg" alt="High">
+          <img class="topimg" src="images/out_dress_front_low.jpg" alt="Low">
+          <div class="bar"></div>
+          <span class="lbl-l">LOW ฿0.2</span><span class="lbl-r">HIGH ฿1.5</span>
+          <input type="range" min="0" max="100" value="50" aria-label="เลื่อนเปรียบเทียบ">
+        </div>
+        <p class="note">มุมกล้อง/จังหวะกระจกต่างกันเล็กน้อยเพราะเป็นการเจนคนละครั้ง — จุดที่ควรดูคือ <b>ความคมของลายผ้าและเลื่อม</b></p>
+      </div>
+      <div class="cmp">
+        <h3>เสื้อลายดอก</h3>
+        <div class="frame">
+          <img src="images/out_shirt2_high.jpg" alt="High">
+          <img class="topimg" src="images/out_shirt2_low.jpg" alt="Low">
+          <div class="bar"></div>
+          <span class="lbl-l">LOW ฿0.2</span><span class="lbl-r">HIGH ฿1.5</span>
+          <input type="range" min="0" max="100" value="50" aria-label="เลื่อนเปรียบเทียบ">
+        </div>
+        <p class="note">High เก็บ<b>เนื้อผ้า (รอยย่นซาติน) และลายพิมพ์</b>ได้ละเอียดกว่า — Low ยังคงสีและลายหลักครบ</p>
+      </div>
+    </div>
+    <div class="rec">
+      <p><b>ข้อเสนอแนะ:</b> ใช้ <b>Low ฿0.2 เจนทั้งชุดก่อน</b> แล้วกดปุ่ม "↻ High" เจนซ้ำเฉพาะรูปที่ต้องการความละเอียดสูง — ที่หลักหมื่นรูป/วัน ต่างกันประมาณ <b>฿1,800 vs ฿15,000 ต่อวัน</b> (ต่างกัน 7 เท่า)</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>4 · ทดสอบระบบทำงานจำนวนมาก + จำลองไฟดับ<small>สั่งเจน 50 รูปรวดผ่านระบบคิวของโปรแกรมจริง แล้วบังคับปิดโปรแกรมกลางคันเพื่อทดสอบการกู้งาน</small></h2>
+    <div class="panel">
+      <div class="timeline">
+        <div class="tl"><span class="dot"></span><div class="txt"><b>เริ่ม batch 50 รูป</b> — ระบบทยอยส่งงาน เจนพร้อมกันสูงสุดตามที่ตั้งไว้ อัปโหลดรูปหุ่นครั้งเดียวใช้ซ้ำทุกงาน</div></div>
+        <div class="tl crash"><span class="dot"></span><div class="txt"><b>บังคับปิดโปรแกรมทันที (จำลองไฟดับ)</b> ตอนเสร็จไป 15 รูป — ขณะนั้นมีงานค้างกลางอากาศ 20 งาน</div></div>
+        <div class="tl ok"><span class="dot"></span><div class="txt"><b>เปิดโปรแกรมใหม่ → ระบบทำต่อเองทันที</b> งานที่ส่งไปแล้วถูกติดตามต่อจากเดิมโดยไม่เสียเงินเจนซ้ำ รูปที่เสร็จแล้ว 15 รูปไม่ถูกแตะ</div></div>
+        <div class="tl ok"><span class="dot"></span><div class="txt"><b>จบครบ 50/50 รูป</b> — ไม่มีรูปเฟล ไม่มีไฟล์ซ้ำ ไฟล์ทั้งหมดถูกเซฟลงโฟลเดอร์ที่กำหนดอัตโนมัติ เสียเวลาจากการปิดโปรแกรมเพียง ~10 วินาที</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>5 · ความเร็วและต้นทุนที่สเกลจริง</h2>
+    <div class="panel table-scroll">
+      <table>
+        <thead><tr><th>สถานการณ์</th><th>ความเร็ว</th><th>10,000 รูป ใช้เวลา</th><th>ค่า API (Low)</th><th>ค่า API (High)</th></tr></thead>
+        <tbody>
+          <tr><td>ที่วัดได้จริงวันนี้ (เจนพร้อมกัน 20)</td><td class="num">~12 รูป/นาที</td><td class="num">~14 ชม. (รันข้ามคืนจบ)</td><td class="num">~฿1,800</td><td class="num">~฿15,000</td></tr>
+          <tr class="hl"><td><b>ตั้งค่าปัจจุบัน (เจนพร้อมกัน 30)</b></td><td class="num"><b>~18–20 รูป/นาที</b></td><td class="num"><b>~9 ชม.</b></td><td class="num"><b>~฿1,800</b></td><td class="num"><b>~฿15,000</b></td></tr>
+          <tr><td>เพิ่ม API key ที่ 2 (โปรแกรมรองรับแล้ว)</td><td class="num">~35–40 รูป/นาที</td><td class="num">~4.5 ชม.</td><td class="num">~฿1,800</td><td class="num">~฿15,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="rec">
+      <p>เวลาเจนต่อรูปของ GPT-Image-2 แกว่งระหว่าง 54–120 วินาทีตามช่วงเวลา — ถ้าต้องการความเร็วการันตี 20+ รูป/นาทีในเวลางาน แนะนำ<b>เพิ่ม API key ตัวที่ 2</b> หรือติดต่อ FAL ขอเพิ่มโควต้า แต่ถ้ารันข้ามคืน ความเร็วปัจจุบันเกินพอสำหรับหลักหมื่นรูป/วัน</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>6 · ผลทดสอบเครื่องมือแก้รูป (Editor)<small>แก้รูปที่เจนแล้วได้ 4 แบบ — สองตัวแรกส่งเจนใหม่ (฿1.5/ครั้ง) สองตัวหลังปรับในเครื่อง ฟรี เห็นผลทันที</small></h2>
+    <div class="cmp-grid">
+      <div class="cmp">
+        <h3>① ปรับความสั้น–ยาว — สั่ง "สั้นลง 30%"</h3>
+        <div class="frame">
+          <img src="images/ed_len_after.jpg" alt="หลังปรับสั้น">
+          <img class="topimg" src="images/ed_len_before.jpg" alt="ก่อนปรับ">
+          <div class="bar"></div>
+          <span class="lbl-l">ก่อน</span><span class="lbl-r">หลัง · สั้นลง 30%</span>
+          <input type="range" min="0" max="100" value="50" aria-label="เลื่อนเปรียบเทียบ">
+        </div>
+        <p class="note">ชุดยาวกลายเป็นความยาวเข่า — หุ่น ฉาก แสง ลายผ้าเดิมทุกอย่าง <b>เงาในกระจกอัปเดตตามความยาวใหม่ด้วย</b> · เลือกได้ 10–50% ทีละ 5% ทั้งสั้นลงและยาวขึ้น (% เป็นค่าประมาณจาก AI)</p>
+      </div>
+      <div class="cmp">
+        <h3>② เทียบสีให้ตรงต้นฉบับ (Match Color)</h3>
+        <div class="frame">
+          <img src="images/ed_col_after.jpg" alt="หลัง match สี">
+          <img class="topimg" src="images/ed_col_before.jpg" alt="ก่อน match สี">
+          <div class="bar"></div>
+          <span class="lbl-l">ก่อน</span><span class="lbl-r">หลัง Match สี</span>
+          <input type="range" min="0" max="100" value="50" aria-label="เลื่อนเปรียบเทียบ">
+        </div>
+        <p class="note">กดปุ่มเดียว — ระบบจำได้เองว่ารูปนี้เจนจากเสื้อตัวไหน และ<b>แนบรูปต้นฉบับไปเทียบให้อัตโนมัติ</b> สี/ลาย/เนื้อผ้ากลับมาตรงต้นฉบับโดยทรงและฉากไม่เปลี่ยน</p>
+      </div>
+    </div>
+    <div class="len-viewer">
+      <div class="lv-frame"><img id="lvImg" src="images/ed_len_before.jpg" alt="ผลปรับความยาวตามเปอร์เซ็นต์"></div>
+      <div class="lv-side">
+        <h3>ทดสอบแยกทุกระดับของ slider — ชุดเดิม สั้นลงทีละขั้น</h3>
+        <div class="lv-pct" id="lvPct">ต้นฉบับ<small>ลาก slider เพื่อดูผลจริงของแต่ละ % (เจนจริงครบทั้ง 9 ระดับ)</small></div>
+        <input type="range" min="0" max="9" step="1" value="0" id="lvRange" aria-label="เลือกเปอร์เซ็นต์ความสั้น">
+        <div class="lv-ticks"><span>เดิม</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span><span>35</span><span>40</span><span>45</span><span>50%</span></div>
+        <p class="lv-note">ทุกใบคือผลเจนจริงจากรูปตั้งต้นเดียวกัน — ความยาวไล่ระดับตามจริง: 10% สั้นขึ้นเล็กน้อย · 35% ระดับเข่า · 50% เหนือเข่า โดยหุ่น ฉาก แสง ลายผ้า และเงากระจกคงเดิมทุกใบ · หมายเหตุ: % เป็นค่าประมาณจาก AI ขั้นที่ติดกัน (ห่าง 5%) อาจใกล้เคียงกัน และเจนซ้ำเพื่อสุ่มผลใหม่ได้เสมอ</p>
+      </div>
+    </div>
+    <div class="tones">
+      <figure><img src="images/tone_dull.jpg" alt="Dull"><figcaption><b>Dull −40%</b>ลดความสด</figcaption></figure>
+      <figure><img src="images/tone_base.jpg" alt="ปกติ"><figcaption><b>ต้นฉบับ</b>—</figcaption></figure>
+      <figure><img src="images/tone_vibrant.jpg" alt="Vibrant"><figcaption><b>Vibrant +40%</b>เพิ่มความสด</figcaption></figure>
+      <figure><img src="images/tone_dark.jpg" alt="มืด"><figcaption><b>มืดลง −35</b>Exposure</figcaption></figure>
+      <figure><img src="images/tone_bright.jpg" alt="สว่าง"><figcaption><b>สว่างขึ้น +35</b>Exposure</figcaption></figure>
+    </div>
+    <div class="rec">
+      <p><b>③ Dull ⟷ Vibrant</b> และ <b>④ สว่าง ⟷ มืด (Exposure)</b> — ปรับในเครื่องแบบเดียวกับแอปรูปภาพใน iPhone: ลาก slider เห็นผลทันที <b>ฟรี ไม่เสียค่า API</b> เซฟเป็นไฟล์ใหม่ ไม่ทับของเดิม · ทุกการแก้ไขเก็บเป็นเวอร์ชันย้อนกลับได้เสมอ</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>สรุปและขั้นต่อไป</h2>
+    <div class="panel">
+      <p style="margin:0 0 10px;color:var(--tx2)">✅ ผ่านการทดสอบครบทุกระบบ: คุณภาพการเจน · มุมภาพ 3 มุม · ระบบคิวจำนวนมาก · การกู้งานอัตโนมัติ · เครื่องมือแก้รูปทั้ง 4 แบบ · รองรับรูปจาก iPhone (HEIC) โดยตรง — ตามที่เลือกไว้: <b style="color:var(--tx)">โหมดผสม Low → ↻ High รายรูป</b> และรองรับความเร็ว <b style="color:var(--tx)">20+ รูป/นาที</b> (เพิ่ม API key ตัวที่ 2 ในหน้าตั้งค่าเมื่อต้องการความเร็วสูงสุด)</p>
+      <p style="margin:0;color:var(--tx2)">📦 <b style="color:var(--tx)">โปรแกรมติดตั้งพร้อมแล้วทั้ง macOS (.dmg) และ Windows (.exe)</b> พร้อมคู่มือติดตั้งภาษาไทย — ขั้นตอนสุดท้ายคือนัดทดสอบติดตั้งบนเครื่องจริงของคุณ แล้วส่งมอบ</p>
+    </div>
+  </section>
+
+  <footer>Mannequin Dressing Studio · ทดสอบเมื่อ 6 ก.ค. 2026 ด้วยรูปจริงจากโฟลเดอร์ที่ได้รับ · ภาพทั้งหมดเจนด้วย GPT-Image-2 ผ่าน FAL.AI</footer>
+</div>
+
+<script>
+  // length-step viewer
+  const LV = [['ต้นฉบับ','ed_len_before.jpg'],['−10%','len_10.jpg'],['−15%','len_15.jpg'],['−20%','len_20.jpg'],['−25%','len_25.jpg'],['−30%','len_30.jpg'],['−35%','len_35.jpg'],['−40%','len_40.jpg'],['−45%','len_45.jpg'],['−50%','len_50.jpg']]
+  LV.forEach(([, f]) => { new Image().src = 'images/' + f })
+  const lvR = document.getElementById('lvRange'), lvI = document.getElementById('lvImg'), lvP = document.getElementById('lvPct')
+  lvR.addEventListener('input', () => {
+    const [label, file] = LV[lvR.value]
+    lvI.src = 'images/' + file
+    lvP.childNodes[0].textContent = label
+  })
+
+  document.querySelectorAll('.cmp .frame').forEach((f) => {
+    const top = f.querySelector('.topimg'), bar = f.querySelector('.bar'), r = f.querySelector('input')
+    r.addEventListener('input', () => {
+      top.style.clipPath = `inset(0 ${100 - r.value}% 0 0)`
+      bar.style.left = r.value + '%'
+    })
+  })
+</script>
+</body>
+</html>

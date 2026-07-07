@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quick Guide — Mannequin Dressing Studio</title>
+<style>
+  :root{
+    --paper:#FCFBF9; --ink:#2A2730; --ink2:#5C5765; --ink3:#8B8593;
+    --rose:#C4747D; --rose-soft:#F6E9EA; --line:#E5E1DC; --card:#F4F2EF; --ok:#3E8E55;
+    font-size:15px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:40px 24px 60px}
+  header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:24px;flex-wrap:wrap}
+  header h1{margin:0;font-size:1.4rem}
+  header h1 small{display:block;font-size:.78rem;font-weight:400;color:var(--rose);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+  header .v{font-size:.72rem;color:var(--ink3)}
+  h2{font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--rose);margin:22px 0 8px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
+  @media (max-width:640px){ .grid{grid-template-columns:1fr} }
+
+  ol.big{counter-reset:st;list-style:none;padding:0;margin:0}
+  ol.big li{counter-increment:st;position:relative;padding:0 0 12px 40px;font-size:.88rem;color:var(--ink2)}
+  ol.big li::before{content:counter(st);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;
+    background:var(--rose);color:#fff;font-weight:700;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+  ol.big li b{color:var(--ink)}
+
+  table{width:100%;border-collapse:collapse;font-size:.8rem;margin:4px 0 10px}
+  th,td{text-align:left;padding:6px 9px;border-bottom:1px solid var(--line)}
+  th{font-size:.65rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3)}
+  td{color:var(--ink2)} td b{color:var(--ink)}
+  .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .btn-ref{display:inline-block;background:var(--rose);color:#fff;border-radius:5px;padding:0 8px;font-size:.76rem;font-weight:600;white-space:nowrap}
+  .callout{background:var(--rose-soft);border-left:3px solid var(--rose);border-radius:8px;padding:10px 14px;font-size:.82rem;margin:10px 0;color:var(--ink2)}
+  .callout b{color:var(--ink)}
+  kbd{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 6px;font-size:.76rem;font-family:inherit}
+  footer{margin-top:28px;border-top:1px solid var(--line);padding-top:10px;font-size:.7rem;color:var(--ink3)}
+  @media print{ body{font-size:12.5px} .wrap{padding:0;max-width:100%} }
+  @page{size:A4;margin:14mm 14mm}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><small>Quick Guide · เริ่มใช้ใน 5 นาที</small>Mannequin Dressing Studio</h1>
+  <span class="v">v0.1.0 · ก.ค. 2026 · <a href="index.html" style="color:var(--rose)">คู่มือฉบับเต็ม</a> · <a href="Quick-Guide-Mannequin-Dressing-Studio.pdf" style="color:var(--rose)">PDF</a></span>
+</header>
+
+<h2>ครั้งแรกครั้งเดียว</h2>
+<ol class="big">
+  <li><b>ติดตั้งและเปิดโปรแกรม</b> — Mac: คลิกขวา → Open → Open · Windows: More info → Run anyway (เฉพาะครั้งแรก)</li>
+  <li><b>แท็บ ตั้งค่า → วาง FAL API Key → กด "ทดสอบ"</b> ให้ขึ้น ✓ · ตั้ง concurrency 30 · Quality เริ่มต้น Low</li>
+</ol>
+
+<h2>เจนภาพ 1 batch (แท็บ "สร้างภาพ")</h2>
+<ol class="big">
+  <li><b>เลือกรูปหุ่น 1 รูป</b> (JPG/PNG/HEIC จาก iPhone ได้เลย — ratio ผลลัพธ์เท่ารูปหุ่น)</li>
+  <li><b>เลือกโฟลเดอร์เสื้อผ้า</b> — คลิกรูปเพื่อติ๊กออกได้</li>
+  <li><b>เลือกมุม</b> Front / Back / Side (เลือกหลายมุมได้ · 1 มุม = 1 รูป)</li>
+  <li><b>เลือก Quality + โฟลเดอร์เซฟผล + Prompt 1/2</b></li>
+  <li><b>ดูราคาที่แถบล่าง → กด ▶ เริ่มเจนทั้งหมด</b></li>
+</ol>
+
+<div class="grid">
+<div>
+<h2>ระหว่างรอ (แท็บ "ติดตามงาน")</h2>
+<table>
+  <tbody>
+    <tr><td><b>✓ เสร็จ</b></td><td>เซฟลงโฟลเดอร์แล้วอัตโนมัติ</td></tr>
+    <tr><td><b>✗ เฟล</b></td><td>กด 🔁 Retry (ระบบลองซ้ำให้เอง 2 รอบก่อนแล้ว)</td></tr>
+    <tr><td><span class="btn-ref">↻ High</span></td><td>เจนรูปนั้นซ้ำแบบคมสุด ฿1.5</td></tr>
+    <tr><td><span class="btn-ref">🎨 Edit</span></td><td>เปิดรูปในหน้าแก้รูป</td></tr>
+  </tbody>
+</table>
+<div class="callout"><b>ปิดโปรแกรม/ไฟดับ/เน็ตหลุด?</b> เปิดใหม่แล้วระบบทำต่อเอง ไม่เจนซ้ำ ไม่เสียเงินซ้ำ — งานใหญ่ตั้งทิ้งไว้ข้ามคืนได้เลย</div>
+</div>
+<div>
+<h2>แก้รูป (แท็บ "แก้รูป")</h2>
+<table>
+  <tbody>
+    <tr><td><b>สั้น–ยาว</b></td><td class="num">฿1.5</td><td>slider 10–50% แล้วกด Generate</td></tr>
+    <tr><td><b>Match สี</b></td><td class="num">฿1.5</td><td>กดปุ่มเดียว — เทียบเสื้อจริงให้เอง</td></tr>
+    <tr><td><b>Dull⟷Vibrant</b></td><td class="num" style="color:var(--ok)">ฟรี</td><td>ลากเห็นผลทันที</td></tr>
+    <tr><td><b>สว่าง⟷มืด</b></td><td class="num" style="color:var(--ok)">ฟรี</td><td>ลากเห็นผลทันที · 💾 เซฟไฟล์ใหม่</td></tr>
+  </tbody>
+</table>
+<h2>ราคา / ความเร็ว</h2>
+<table>
+  <tbody>
+    <tr><td><b>Low</b></td><td class="num">฿0.2/รูป</td><td>งานหลัก — แนะนำ</td></tr>
+    <tr><td><b>High</b></td><td class="num">฿1.5/รูป</td><td>รายละเอียดผ้าสูงสุด</td></tr>
+    <tr><td><b>ความเร็ว</b></td><td class="num" colspan="2">~18–20 รูป/นาที (2 keys: ~40/นาที)</td></tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+<div class="callout"><b>💡 สูตรประหยัดที่แนะนำ:</b> เจนทั้งชุดด้วย <b>Low ฿0.2</b> → เปิดดูผล → กด <span class="btn-ref">↻ High</span> เฉพาะรูปที่จะใช้จริง — ประหยัดกว่าเจน High ทั้งชุดถึง 7 เท่า</div>
+
+<footer>ไฟล์ผลลัพธ์: <kbd>ชื่อเสื้อ_มุม_quality.png</kbd> ในโฟลเดอร์ที่เลือกไว้ · คู่มือฉบับเต็ม: เปิดไฟล์ "คู่มือการใช้งาน" ที่ได้รับพร้อมโปรแกรม</footer>
+</div>
+</body>
+</html>

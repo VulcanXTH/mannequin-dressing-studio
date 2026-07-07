@@ -1,0 +1,32 @@
+{
+  "name": "mannequin-dressing-studio",
+  "productName": "Mannequin Dressing Studio",
+  "version": "0.1.0",
+  "description": "Bulk mannequin try-on image generator (GPT-Image-2 via FAL.AI)",
+  "main": "./out/main/index.js",
+  "author": "VulcanX",
+  "private": true,
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "postinstall": "electron-builder install-app-deps",
+    "dist:mac": "electron-vite build && electron-builder --mac",
+    "dist:win": "electron-vite build && electron-builder --win"
+  },
+  "dependencies": {
+    "@fal-ai/client": "^1.2.3",
+    "better-sqlite3": "^12.11.1",
+    "heic-convert": "^2.1.0",
+    "jimp": "^0.22.12",
+    "image-size": "^1.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^37.0.0",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^3.1.0",
+    "vite": "^6.0.0"
+  }
+}

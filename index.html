@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mannequin Dressing Studio — Mockup</title>
+<style>
+  :root{
+    --stage:#EDEAE6; --ink:#2A2730;
+    --win:#1C1B20; --panel:#26252B; --card:#2F2E34; --line:#3B3A42;
+    --tx:#ECEAEF; --tx2:#A6A2AF; --tx3:#7C7887;
+    --rose:#D98E96; --rose-deep:#C4747D; --rose-ink:#2B1216;
+    --ok:#7FC98F; --busy:#E0B26B; --bad:#E07A7A; --queue:#8B8794;
+    --r:10px;
+    font-size:15px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--stage);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .stage{max-width:1120px;margin:0 auto;padding:40px 20px 64px;display:flex;flex-direction:column;gap:22px}
+
+  /* intro */
+  .intro h1{font-size:1.5rem;margin:0 0 6px;letter-spacing:-.01em;text-wrap:balance}
+  .intro p{margin:0;color:#6B6675;max-width:62ch;line-height:1.6}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{font-size:.78rem;padding:5px 11px;border-radius:999px;background:#fff;border:1px solid #DCD8D2;color:#5A5563}
+
+  /* window */
+  .window{background:var(--win);border-radius:14px;box-shadow:0 24px 60px rgba(35,25,30,.28),0 4px 14px rgba(35,25,30,.18);overflow:hidden;color:var(--tx)}
+  .titlebar{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#232228;border-bottom:1px solid var(--line)}
+  .dots{display:flex;gap:7px}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .dot:nth-child(1){background:#F26D66}.dot:nth-child(2){background:#F2BE55}.dot:nth-child(3){background:#63C763}
+  .titlebar .name{flex:1;text-align:center;font-size:.8rem;color:var(--tx3);letter-spacing:.04em}
+  .titlebar .ver{font-size:.7rem;color:var(--tx3)}
+
+  .body{display:flex;min-height:640px}
+  .sidebar{width:196px;flex-shrink:0;background:#212026;border-right:1px solid var(--line);padding:14px 10px;display:flex;flex-direction:column;gap:4px}
+  .nav{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:8px;border:none;background:none;color:var(--tx2);font:inherit;font-size:.88rem;cursor:pointer}
+  .nav svg{width:17px;height:17px;flex-shrink:0}
+  .nav:hover{background:#2A2930;color:var(--tx)}
+  .nav.on{background:var(--rose);color:var(--rose-ink);font-weight:600}
+  .nav:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+  .side-foot{margin-top:auto;padding:10px 12px;font-size:.72rem;color:var(--tx3);line-height:1.5;border-top:1px solid var(--line)}
+  .side-foot b{color:var(--ok);font-weight:600}
+
+  .main{flex:1;padding:24px 26px;overflow-x:auto}
+  .screen{display:none;flex-direction:column;gap:18px}
+  .screen.on{display:flex}
+  h2.sc{margin:0;font-size:1.02rem;font-weight:650;letter-spacing:.01em}
+  h2.sc small{display:block;font-weight:400;color:var(--tx2);font-size:.8rem;margin-top:3px}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+  .lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--tx3);margin:0 0 10px;font-weight:600}
+
+  /* generate screen */
+  .gen-top{display:grid;grid-template-columns:220px 1fr;gap:16px}
+  .drop{border:1.5px dashed #4A4852;border-radius:var(--r);padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+  .drop .hint{font-size:.75rem;color:var(--tx2);line-height:1.5}
+  .ratio-tag{font-size:.72rem;color:var(--busy);background:rgba(224,178,107,.12);padding:3px 9px;border-radius:999px}
+  .mnq{width:110px;height:170px}
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;margin-top:4px}
+  .th{position:relative;aspect-ratio:2/3;border-radius:6px;display:flex;align-items:center;justify-content:center;background:#3A3940}
+  .th svg{width:60%;height:60%}
+  .th .ck{position:absolute;top:4px;right:4px;width:14px;height:14px;border-radius:4px;background:var(--rose);color:var(--rose-ink);font-size:10px;line-height:14px;text-align:center;font-weight:700}
+  .th.more{color:var(--tx2);font-size:.78rem;background:#33323A}
+  .folder-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .folder-path{font-size:.8rem;color:var(--tx2);background:var(--card);padding:7px 12px;border-radius:7px;border:1px solid var(--line);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .opt-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  select,input[type=text],input[type=password]{width:100%;background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:7px;padding:8px 10px;font:inherit;font-size:.86rem}
+  .prompt-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:7px;padding:9px 12px;font-size:.83rem;color:var(--tx2)}
+  .lock{color:var(--ok);font-size:.72rem;background:rgba(127,201,143,.12);padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .toggle-custom{margin-left:auto;background:none;border:1px solid var(--line);color:var(--tx2);border-radius:7px;padding:5px 11px;font:inherit;font-size:.76rem;cursor:pointer}
+
+  .views{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .vw{display:flex;flex-direction:column;gap:3px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font:inherit;color:var(--tx2);cursor:pointer;text-align:left}
+  .vw b{font-size:.8rem;color:var(--tx);font-weight:600}
+  .vw span{font-size:.7rem;color:var(--tx3);line-height:1.4}
+  .vw.on{border-color:var(--rose);background:rgba(217,142,150,.1)}
+  .vw.on b{color:var(--rose)}
+  .go-bar{display:flex;align-items:center;gap:16px;background:linear-gradient(90deg,#2B2228,#26252B);border:1px solid #4A3238;border-radius:var(--r);padding:14px 18px}
+  .cost{flex:1;font-size:.86rem;color:var(--tx2);line-height:1.55}
+  .cost b{color:var(--tx);font-weight:650}
+  .btn{border:none;border-radius:9px;padding:11px 22px;font:inherit;font-weight:650;font-size:.9rem;cursor:pointer}
+  .btn.rose{background:var(--rose);color:var(--rose-ink)}
+  .btn.rose:hover{background:#E39CA4}
+  .btn.ghost{background:var(--card);color:var(--tx2);border:1px solid var(--line);font-weight:500;font-size:.82rem;padding:8px 14px}
+
+  /* dashboard */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+  .stat .n{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .stat .t{font-size:.74rem;color:var(--tx2);margin-top:2px}
+  .stat.ok .n{color:var(--ok)}.stat.busy .n{color:var(--busy)}.stat.q .n{color:var(--queue)}.stat.bad .n{color:var(--bad)}
+  .prog-wrap{display:flex;align-items:center;gap:14px}
+  .prog{flex:1;height:8px;border-radius:999px;background:var(--card);overflow:hidden}
+  .prog i{display:block;height:100%;width:24%;background:linear-gradient(90deg,var(--rose-deep),var(--rose));border-radius:999px}
+  .meta{font-size:.78rem;color:var(--tx2);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .jobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px}
+  .job{background:var(--panel);border:1px solid var(--line);border-radius:9px;overflow:hidden;display:flex;flex-direction:column}
+  .job .pic{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;background:#38373E}
+  .job .pic svg{width:52%;height:52%}
+  .job .pic.wait{background:#2B2A31;color:var(--tx3);font-size:.72rem}
+  .job .inf{padding:8px 9px;display:flex;flex-direction:column;gap:6px}
+  .job .fn{font-size:.7rem;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pill{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:999px;align-self:flex-start}
+  .pill.ok{background:rgba(127,201,143,.14);color:var(--ok)}
+  .pill.busy{background:rgba(224,178,107,.14);color:var(--busy)}
+  .pill.q{background:rgba(139,135,148,.14);color:var(--queue)}
+  .pill.bad{background:rgba(224,122,122,.16);color:var(--bad)}
+  .spin{display:inline-block;width:9px;height:9px;border:2px solid var(--busy);border-top-color:transparent;border-radius:50%;animation:sp 1s linear infinite;vertical-align:-1px;margin-right:5px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){.spin{animation:none}}
+  .retry-mini{border:1px solid rgba(224,122,122,.5);background:none;color:var(--bad);border-radius:6px;padding:4px 8px;font:inherit;font-size:.7rem;cursor:pointer}
+  .edit-mini{border:1px solid rgba(217,142,150,.5);background:none;color:var(--rose);border-radius:6px;padding:4px 8px;font:inherit;font-size:.7rem;cursor:pointer}
+  .edit-mini:hover{background:rgba(217,142,150,.12)}
+  .edit-mini.hi{color:var(--busy);border-color:rgba(224,178,107,.5)}
+  .edit-mini.hi:hover{background:rgba(224,178,107,.12)}
+  .minis{display:flex;gap:4px}
+  .ref-chip{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-top:4px;font-size:.78rem;color:var(--tx2)}
+  .ref-chip .sw{width:26px;height:36px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#3A3940}
+  .ref-chip .sw svg{width:70%;height:70%}
+  .ref-chip .auto{margin-left:auto;color:var(--ok);font-size:.7rem;background:rgba(127,201,143,.12);padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .ref-chip .change{background:none;border:none;color:var(--tx3);font:inherit;font-size:.72rem;cursor:pointer;text-decoration:underline}
+  .dash-head{display:flex;align-items:center;gap:10px}
+  .dash-head h2{flex:1}
+
+  /* editor */
+  .ed{display:grid;grid-template-columns:minmax(250px,340px) 1fr;gap:18px;align-items:start}
+  .canvas{background:#2A2930;border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .canvas .frame{background:#3A3238;border-radius:8px;padding:18px 26px}
+  .versions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .v{font-size:.72rem;padding:4px 11px;border-radius:999px;border:1px solid var(--line);color:var(--tx2);background:var(--card)}
+  .v.on{background:var(--rose);color:var(--rose-ink);border-color:var(--rose);font-weight:600}
+  .tools{display:flex;flex-direction:column;gap:14px}
+  .tool{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:15px 16px}
+  .tool-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .tool-head h3{margin:0;font-size:.9rem;font-weight:650;flex:1}
+  .badge{font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .badge.regen{background:rgba(224,178,107,.13);color:var(--busy)}
+  .badge.free{background:rgba(127,201,143,.13);color:var(--ok)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg button{border:none;background:var(--card);color:var(--tx2);padding:7px 14px;font:inherit;font-size:.8rem;cursor:pointer}
+  .seg button.on{background:var(--rose);color:var(--rose-ink);font-weight:600}
+  .slider-row{display:flex;align-items:center;gap:14px;margin-top:12px}
+  input[type=range]{flex:1;accent-color:var(--rose);height:22px}
+  .val{font-size:1rem;font-weight:700;font-variant-numeric:tabular-nums;min-width:52px;text-align:right;color:var(--rose)}
+  .ticks{display:flex;justify-content:space-between;font-size:.65rem;color:var(--tx3);margin-top:2px;padding:0 2px}
+  .tool .desc{font-size:.76rem;color:var(--tx2);line-height:1.55;margin:0 0 4px}
+  .tool-foot{display:flex;justify-content:flex-end;margin-top:12px;gap:8px}
+
+  /* settings */
+  .set-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+  .field label{font-size:.78rem;color:var(--tx2)}
+  .key-row{display:flex;gap:8px;align-items:center}
+  .okmark{color:var(--ok);font-size:.76rem;white-space:nowrap}
+
+  /* notes under window */
+  .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+  .note{background:#fff;border:1px solid #DCD8D2;border-radius:10px;padding:14px 16px}
+  .note h4{margin:0 0 5px;font-size:.82rem;color:var(--ink)}
+  .note p{margin:0;font-size:.78rem;color:#6B6675;line-height:1.6}
+
+  @media (max-width:760px){
+    .body{flex-direction:column}
+    .sidebar{width:100%;flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line)}
+    .side-foot{display:none}
+    .gen-top,.ed,.set-grid{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .opt-row{grid-template-columns:1fr}
+  }
+</style>
+
+<div class="stage">
+  <div class="intro">
+    <h1>Mannequin Dressing Studio — Mockup หน้าตาแอป</h1>
+    <p>ตัวอย่างหน้าจอโปรแกรม Desktop (macOS + Windows) สำหรับเจนภาพหุ่นใส่เสื้อผ้าแบบ Bulk ผ่าน GPT-Image-2 บน FAL.AI — กดเมนูซ้ายมือเพื่อดูแต่ละหน้าได้เลย ยังเป็น mockup สำหรับรีวิวดีไซน์ ยังไม่เชื่อม API จริง</p>
+    <div class="chips">
+      <span class="chip">🖥️ Electron — macOS + Windows</span>
+      <span class="chip">⚙️ GPT-Image-2 via FAL.AI</span>
+      <span class="chip">🎚️ Quality: High ฿1.5 / Low ฿0.2 ต่อรูป</span>
+      <span class="chip">📐 มุมภาพ Front / Back / Side</span>
+      <span class="chip">🔁 Auto-retry ×2 + Retry manual</span>
+      <span class="chip">🌙 รันข้ามคืนได้ · กันเครื่อง sleep</span>
+    </div>
+  </div>
+
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="name">Mannequin Dressing Studio</div>
+      <div class="ver">v1.0</div>
+    </div>
+    <div class="body">
+      <nav class="sidebar">
+        <button class="nav on" data-sc="gen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          สร้างภาพ (Generate)</button>
+        <button class="nav" data-sc="dash">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          ติดตามงาน (Dashboard)</button>
+        <button class="nav" data-sc="edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+          แก้ไขภาพ (Editor)</button>
+        <button class="nav" data-sc="set">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          ตั้งค่า (Settings)</button>
+        <div class="side-foot">API Key 1 <b>● เชื่อมต่อแล้ว</b><br>API Key 2 <span style="color:var(--tx3)">○ ไม่ได้ใช้</span></div>
+      </nav>
+
+      <main class="main">
+
+        <!-- ═══ GENERATE ═══ -->
+        <section class="screen on" id="sc-gen">
+          <h2 class="sc">สร้างภาพแบบ Bulk<small>หุ่น 1 รูป × เสื้อผ้าทั้งโฟลเดอร์ → ได้ภาพหุ่นใส่ชุด ratio เท่ารูปหุ่น</small></h2>
+
+          <div class="gen-top">
+            <div class="panel">
+              <p class="lbl">1 · รูปหุ่น (1 รูป)</p>
+              <div class="drop">
+                <svg class="mnq" viewBox="0 0 110 170">
+                  <ellipse cx="55" cy="160" rx="26" ry="5" fill="#4A4046"/>
+                  <rect x="53" y="98" width="4" height="60" fill="#8A6F55"/>
+                  <path d="M55 18c-3 0-5 2-5 5v6c-9 3-15 10-16 20-1 11 2 20 4 30 2 9 1 16-2 22h38c-3-6-4-13-2-22 2-10 5-19 4-30-1-10-7-17-16-20v-6c0-3-2-5-5-5z" fill="#EDEAEF"/>
+                </svg>
+                <div class="hint">mannequin_front.png</div>
+                <span class="ratio-tag">ratio 2:3 → output 1024×1536</span>
+              </div>
+            </div>
+            <div class="panel">
+              <p class="lbl">2 · โฟลเดอร์เสื้อผ้า</p>
+              <div class="folder-row">
+                <div class="folder-path">📁 /Users/customer/Desktop/dresses_july/</div>
+                <button class="btn ghost">เลือกโฟลเดอร์…</button>
+              </div>
+              <div class="thumbs" id="thumbs"></div>
+              <p style="font-size:.76rem;color:var(--tx2);margin:10px 0 0">เลือกแล้ว <b style="color:var(--tx)">48 / 48 รูป</b> · ติ๊กออกรายรูปได้</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <p class="lbl">3 · มุมภาพต่อเสื้อ 1 ตัว (เลือกได้หลายมุม · 1 มุม = 1 รูป)</p>
+            <div class="views">
+              <button class="vw on"><b>Front — ด้านหน้า</b><span>ตามปกติ</span></button>
+              <button class="vw"><b>Back — ด้านหลัง</b><span>หมุนหุ่น 180°</span></button>
+              <button class="vw"><b>Side — ด้านข้าง</b><span>หมุนหุ่น 110° หันหน้าชุดเข้ากระจกเล็กน้อย</span></button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <p class="lbl">4 · ตั้งค่าการเจน</p>
+            <div class="opt-row">
+              <div class="field"><label>Quality</label>
+                <select><option>High — ฿1.5/รูป (~$0.042)</option><option>Low — ฿0.2/รูป (~$0.005)</option></select></div>
+              <div class="field"><label>โฟลเดอร์เซฟผลลัพธ์</label>
+                <div class="key-row"><input type="text" value="/Users/customer/Desktop/output_july/" readonly><button class="btn ghost" style="white-space:nowrap">📁 เลือกโฟลเดอร์…</button></div></div>
+              <div class="field"><label>Output format</label>
+                <select><option>PNG</option><option>JPEG</option><option>WebP</option></select></div>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label>💬 Default Prompt</label>
+              <div class="key-row" style="flex-wrap:wrap">
+                <select style="flex:1;min-width:230px"><option>Prompt 1 — ห้องกระจก (mirror reflection)</option><option>Prompt 2 — ฉากผนัง charcoal</option></select>
+                <span class="lock">✓ ตั้งค่าไว้แล้ว</span>
+                <button class="toggle-custom" style="margin-left:0">Custom (option)</button>
+              </div>
+            </div>
+            <p style="font-size:.74rem;color:var(--tx3);margin:8px 2px 0;line-height:1.6">2 บรรทัดแรกปรับตามชื่อ source ที่ตั้งไว้อัตโนมัติ — ตัวอย่าง: “Use <b style="color:var(--tx2)">mannequin_front.png</b> as the base image. Put the garment from <b style="color:var(--tx2)">dresses_july</b> on the mannequin…”</p>
+          </div>
+
+          <div class="go-bar">
+            <div class="cost">ประมาณการ: <b>48 เสื้อ × 1 มุม × High ≈ ฿73</b> ($2.02) · ราว 3–4 นาทีที่ 20 concurrent<br>
+            <span style="font-size:.76rem;color:var(--tx3)">สลับเป็น Low ทั้งชุด ≈ ฿9 · สเกลใหญ่: 10,000 รูป × High ≈ ฿15,000 ($420)</span></div>
+            <button class="btn rose" id="go">▶ เริ่มเจนทั้งหมด</button>
+          </div>
+        </section>
+
+        <!-- ═══ DASHBOARD ═══ -->
+        <section class="screen" id="sc-dash">
+          <div class="dash-head">
+            <h2 class="sc">ติดตามงานแบบ Realtime<small>Batch: dresses_july · เริ่ม 09:14 · มุม: Front · Quality: Low ฿0.2 — รูปไหนไม่ตรงค่อยกด ↻ High รายรูป</small></h2>
+            <button class="btn ghost">⏸ พักงาน</button>
+            <button class="btn ghost" style="color:var(--bad);border-color:rgba(224,122,122,.4)">🔁 Retry ที่เฟลทั้งหมด (3)</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat ok"><div class="n">132</div><div class="t">✓ เสร็จแล้ว (เซฟลงเครื่องแล้ว)</div></div>
+            <div class="stat busy"><div class="n">24</div><div class="t">กำลังเจน</div></div>
+            <div class="stat q"><div class="n">386</div><div class="t">รอคิว</div></div>
+            <div class="stat bad"><div class="n">3</div><div class="t">เฟล (auto-retry ครบแล้ว)</div></div>
+          </div>
+
+          <div class="panel">
+            <div class="prog-wrap">
+              <div class="prog"><i></i></div>
+              <span class="meta">132/545 · 24%</span>
+              <span class="meta" style="color:var(--rose)">⚡ 22 รูป/นาที</span>
+              <span class="meta">เหลือ ~19 นาที</span>
+            </div>
+          </div>
+
+          <div class="jobs" id="jobs"></div>
+        </section>
+
+        <!-- ═══ EDITOR ═══ -->
+        <section class="screen" id="sc-edit">
+          <h2 class="sc">แก้ไขภาพที่เจนแล้ว<small>กำลังแก้: dress_017_tryon.png — ระบบจำให้เองว่าเจนมาจากเสื้อ dress_017.jpg · ทุกเวอร์ชันเก็บแยกไฟล์ ไม่ทับของเดิม</small></h2>
+          <div class="ed">
+            <div class="canvas">
+              <div class="frame" id="edframe">
+                <svg width="150" height="230" viewBox="0 0 110 170" id="edsvg">
+                  <ellipse cx="55" cy="160" rx="26" ry="5" fill="#4A4046"/>
+                  <rect x="53" y="98" width="4" height="60" fill="#8A6F55"/>
+                  <path d="M55 18c-3 0-5 2-5 5v6c-9 3-15 10-16 20-1 11 2 20 4 30 2 9 1 16-2 22h38c-3-6-4-13-2-22 2-10 5-19 4-30-1-10-7-17-16-20v-6c0-3-2-5-5-5z" fill="#EDEAEF"/>
+                  <path d="M40 44c4-5 26-5 30 0 2 3 3 8 3 12l6 45c1 8-14 12-24 12s-25-4-24-12l6-45c0-4 1-9 3-12z" fill="#D97C93"/>
+                  <path d="M43 47c8 3 16 3 24 0M41 60c9 4 19 4 28 0M39 76c10 5 22 5 32 0M37 92c11 5 25 5 36 0" stroke="#C05C77" stroke-width="1.6" fill="none" opacity=".7"/>
+                  <circle cx="47" cy="52" r="1.6" fill="#F3D2DB"/><circle cx="57" cy="55" r="1.6" fill="#F3D2DB"/><circle cx="66" cy="51" r="1.6" fill="#F3D2DB"/><circle cx="51" cy="68" r="1.6" fill="#F3D2DB"/><circle cx="62" cy="70" r="1.6" fill="#F3D2DB"/>
+                </svg>
+              </div>
+              <div class="versions">
+                <span class="v">ต้นฉบับ</span><span class="v">v1 · สั้นลง 30%</span><span class="v on">v2 · match สี</span>
+              </div>
+              <button class="btn rose" style="padding:9px 18px;font-size:.84rem">💾 บันทึกเป็นไฟล์ใหม่</button>
+            </div>
+
+            <div class="tools">
+              <div class="tool">
+                <div class="tool-head"><h3>1 · ความสั้น–ยาวของชุด</h3><span class="badge regen">เจนใหม่ · ~$0.04</span></div>
+                <div class="seg"><button class="on">✂️ สั้นลง</button><button>📏 ยาวขึ้น</button></div>
+                <div class="slider-row">
+                  <input type="range" min="10" max="50" step="5" value="30" id="lenSlider" aria-label="เปอร์เซ็นต์ความสั้นยาว">
+                  <span class="val" id="lenVal">30%</span>
+                </div>
+                <div class="ticks"><span>10%</span><span>20%</span><span>30%</span><span>40%</span><span>50%</span></div>
+                <p class="desc" style="margin:10px 0 0;color:var(--ok)">✓ แนบรูปเสื้อต้นฉบับเป็น ref อัตโนมัติ — กันสี/ลายเพี้ยนตอนเจนใหม่</p>
+                <div class="tool-foot"><button class="btn rose" style="padding:8px 16px;font-size:.82rem">Generate</button></div>
+              </div>
+
+              <div class="tool">
+                <div class="tool-head"><h3>2 · Match สีให้ตรงต้นฉบับ</h3><span class="badge regen">เจนใหม่ · ~$0.04</span></div>
+                <p class="desc">ระบบจำได้ว่าภาพนี้เจนจากเสื้อตัวไหน — แนบรูปต้นฉบับให้เองอัตโนมัติ กดปุ่มเดียวจบ ไม่ต้องอัปโหลดซ้ำ</p>
+                <div class="ref-chip"><span class="sw" id="refsw"></span><span>Ref: dress_017.jpg</span><span class="auto">✓ แนบอัตโนมัติ</span><button class="change">เปลี่ยนรูปเอง…</button></div>
+                <div class="tool-foot"><button class="btn rose" style="padding:8px 16px;font-size:.82rem">Match Color</button></div>
+              </div>
+
+              <div class="tool">
+                <div class="tool-head"><h3>3 · Dull ⟷ Vibrant</h3><span class="badge free">ทันที · ฟรี ไม่ต้องเจน</span></div>
+                <p class="desc">ปรับความสดของสีแบบเห็นผลทันที — <b style="color:var(--tx)">ลองลากดูได้เลย รูปซ้ายเปลี่ยนจริง</b></p>
+                <div class="slider-row">
+                  <input type="range" min="-50" max="50" step="10" value="0" id="satSlider" aria-label="ปรับ Dull-Vibrant">
+                  <span class="val" id="satVal">0%</span>
+                </div>
+                <div class="ticks"><span>Dull −50%</span><span>0</span><span>Vibrant +50%</span></div>
+              </div>
+
+              <div class="tool">
+                <div class="tool-head"><h3>4 · สว่าง ⟷ มืด (Exposure)</h3><span class="badge free">ทันที · ฟรี ไม่ต้องเจน</span></div>
+                <p class="desc">ปรับความสว่างเหมือนปุ่ม Exposure ใน iPhone Photos — <b style="color:var(--tx)">ลากดูได้เลย รูปซ้ายเปลี่ยนจริง</b></p>
+                <div class="slider-row">
+                  <input type="range" min="-50" max="50" step="5" value="0" id="expSlider" aria-label="ปรับความสว่าง Exposure">
+                  <span class="val" id="expVal">0</span>
+                </div>
+                <div class="ticks"><span>มืด −50</span><span>0</span><span>สว่าง +50</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ SETTINGS ═══ -->
+        <section class="screen" id="sc-set">
+          <h2 class="sc">ตั้งค่า<small>ค่าทั้งหมดจำไว้ในเครื่อง ไม่ต้องกรอกใหม่</small></h2>
+          <div class="set-grid">
+            <div class="panel">
+              <p class="lbl">FAL.AI API Keys</p>
+              <div class="field"><label>API Key 1 (หลัก)</label>
+                <div class="key-row"><input type="password" value="fal-xxxxxxxxxxxxxxxxxxxx" readonly><button class="btn ghost">ทดสอบ</button><span class="okmark">✓ ใช้ได้</span></div></div>
+              <div class="field"><label>API Key 2 (สำรอง — เพิ่มความเร็ว, ไม่บังคับ)</label>
+                <div class="key-row"><input type="password" placeholder="ยังไม่ได้ใส่"><button class="btn ghost">ทดสอบ</button></div></div>
+            </div>
+            <div class="panel">
+              <p class="lbl">การเจน</p>
+              <div class="field"><label>จำนวนงานพร้อมกัน (concurrency) — 20</label>
+                <input type="range" min="1" max="30" value="20" aria-label="concurrency"></div>
+              <div class="field"><label>Quality เริ่มต้น</label>
+                <select><option>High — ฿1.5/รูป</option><option>Low — ฿0.2/รูป</option></select></div>
+              <div class="field"><label>Auto-retry เมื่อเฟล</label>
+                <select><option>2 ครั้ง (แนะนำ)</option><option>3 ครั้ง</option><option>ปิด — กดเองอย่างเดียว</option></select></div>
+              <div class="field"><label>ระหว่างรันงาน</label>
+                <select><option>กันเครื่อง sleep อัตโนมัติ (แนะนำสำหรับรันข้ามคืน)</option><option>ปกติ</option></select></div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><h4>🔁 ระบบ Retry</h4><p>เฟลแล้วระบบลองใหม่เอง 2 ครั้ง (เว้นช่วง 5 → 15 วิ) ถ้ายังไม่ผ่านค่อยขึ้นสีแดงพร้อมปุ่ม Retry รายรูป หรือกด "Retry ที่เฟลทั้งหมด" ทีเดียว</p></div>
+    <div class="note"><h4>💾 ปลอดภัยระดับหมื่นรูป</h4><p>คิวงานเก็บลงฐานข้อมูลในเครื่อง — ปิดโปรแกรม ไฟดับ เน็ตหลุด เปิดใหม่แล้วทำต่อจากจุดเดิม รูปที่เสร็จแล้วไม่เจนซ้ำ ไม่เสียเงินซ้ำ</p></div>
+    <div class="note"><h4>🎨 Editor 4 เครื่องมือ</h4><p>กดปุ่ม Edit จากรูปที่เสร็จใน Dashboard ได้เลย — สั้น–ยาว และ Match สี เจนใหม่โดยแนบรูปเสื้อต้นฉบับเป็น ref อัตโนมัติ ส่วน Dull/Vibrant และ สว่าง–มืด (Exposure) ปรับในเครื่องเห็นผลทันที ฟรี ไม่กิน API</p></div>
+    <div class="note"><h4>💬 Default Prompt ×2</h4><p>เลือกได้ 2 ชุด (ห้องกระจก / ฉากผนัง charcoal) — 2 บรรทัดแรกระบบแทนชื่อรูปหุ่นกับชื่อโฟลเดอร์ที่ตั้งไว้ให้อัตโนมัติ Custom เป็นแค่ option</p></div>
+    <div class="note"><h4>💸 Workflow ประหยัด</h4><p>เจน Low ฿0.2 ทั้งชุดก่อน รูปไหนสี/รายละเอียดไม่ตรงต้นฉบับ ค่อยกด ↻ High ฿1.5 เจนซ้ำเฉพาะรูปนั้น — ถูกกว่าเจน High ทั้งชุดหลายเท่า</p></div>
+  </div>
+</div>
+
+<script>
+  // tab switching
+  const navs=document.querySelectorAll('.nav'),screens={gen:'sc-gen',dash:'sc-dash',edit:'sc-edit',set:'sc-set'};
+  navs.forEach(b=>b.addEventListener('click',()=>{
+    navs.forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+    document.getElementById(screens[b.dataset.sc]).classList.add('on');
+  }));
+  // "เริ่มเจน" jumps to dashboard
+  document.getElementById('go').addEventListener('click',()=>{
+    document.querySelector('[data-sc="dash"]').click();
+    document.querySelector('.window').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
+  // garment thumbnails (generate screen)
+  const cols=['#D97C93','#7C93D9','#8FBF8A','#D9B27C','#B58FD9','#D97C7C','#7CC4D9','#C9C47F','#D9977C','#8A9BB5','#C77FA8'];
+  const dress=(c)=>`<svg viewBox="0 0 40 60"><path d="M14 6l6 4 6-4 5 8-4 4 5 32c1 5-8 8-12 8s-13-3-12-8l5-32-4-4z" fill="${c}"/></svg>`;
+  const tEl=document.getElementById('thumbs');
+  for(let i=0;i<11;i++){const d=document.createElement('div');d.className='th';d.innerHTML=dress(cols[i])+'<span class="ck">✓</span>';tEl.appendChild(d);}
+  const more=document.createElement('div');more.className='th more';more.textContent='+37';tEl.appendChild(more);
+
+  // dashboard job cards
+  const jobs=[['ok','dress_001'],['ok','dress_002'],['ok','dress_003'],['ok','dress_004'],['busy','dress_133'],['busy','dress_134'],['busy','dress_135'],['bad','dress_087'],['q','dress_157'],['q','dress_158'],['q','dress_159'],['q','dress_160']];
+  const stTxt={ok:'✓ เสร็จ',busy:'<span class="spin"></span>กำลังเจน',q:'รอคิว',bad:'✗ เฟล'};
+  const jEl=document.getElementById('jobs');
+  jobs.forEach(([st,fn],i)=>{
+    const d=document.createElement('div');d.className='job';
+    const pic=st==='ok'?`<div class="pic">${dress(cols[i%cols.length])}</div>`:`<div class="pic wait">${st==='busy'?'…':st==='bad'?'—':'รอ'}</div>`;
+    d.innerHTML=`${pic}<div class="inf"><span class="fn">${fn}.jpg</span><span class="pill ${st}">${stTxt[st]}</span>${st==='bad'?'<button class="retry-mini">🔁 Retry</button>':st==='ok'?'<div class="minis"><button class="edit-mini">🎨 Edit</button><button class="edit-mini hi" title="เจนรูปนี้ใหม่เป็น High ฿1.5">↻ High</button></div>':''}</div>`;
+    jEl.appendChild(d);
+  });
+  // Edit button on finished cards → jump to Editor
+  jEl.addEventListener('click',e=>{
+    if(e.target.classList.contains('edit-mini')&&!e.target.classList.contains('hi')){
+      document.querySelector('[data-sc="edit"]').click();
+      document.querySelector('.window').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+  // auto-attached ref thumbnail in Editor
+  document.getElementById('refsw').innerHTML=dress('#D97C93');
+
+  // editor sliders
+  const len=document.getElementById('lenSlider'),lenV=document.getElementById('lenVal');
+  len.addEventListener('input',()=>lenV.textContent=len.value+'%');
+  const sat=document.getElementById('satSlider'),satV=document.getElementById('satVal'),fr=document.getElementById('edsvg');
+  const exp=document.getElementById('expSlider'),expV=document.getElementById('expVal');
+  function applyFilter(){
+    fr.style.filter=`saturate(${1+(+sat.value)/100}) brightness(${1+(+exp.value)/100})`;
+  }
+  sat.addEventListener('input',()=>{
+    const v=+sat.value;satV.textContent=(v>0?'+':'')+v+'%';applyFilter();
+  });
+  exp.addEventListener('input',()=>{
+    const v=+exp.value;expV.textContent=(v>0?'+':'')+v;applyFilter();
+  });
+  // view multi-select (Front/Back/Side)
+  document.querySelectorAll('.vw').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('on')));
+  // segmented toggle
+  document.querySelectorAll('.seg').forEach(s=>s.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    s.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  })));
+</script>
+
+</html>

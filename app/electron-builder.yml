@@ -1,0 +1,15 @@
+appId: com.vulcanx.mannequin-dressing-studio
+productName: Mannequin Dressing Studio
+directories:
+  output: dist
+files:
+  - out/**
+  - package.json
+mac:
+  target: dmg
+  identity: null
+win:
+  target: nsis
+nsis:
+  oneClick: true
+npmRebuild: true

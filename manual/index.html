@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>คู่มือการใช้งาน — Mannequin Dressing Studio</title>
+<style>
+  :root{
+    --paper:#FCFBF9; --ink:#2A2730; --ink2:#5C5765; --ink3:#8B8593;
+    --rose:#C4747D; --rose-soft:#F6E9EA; --line:#E5E1DC; --card:#F4F2EF;
+    --ok:#3E8E55; --warn:#A8752B; --bad:#B54848;
+    font-size:15.5px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai",sans-serif;
+    line-height:1.75;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:48px 24px 80px}
+
+  header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+  header .kicker{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--rose);font-weight:700}
+  header h1{margin:8px 0 6px;font-size:1.9rem;letter-spacing:-.01em;line-height:1.25}
+  header p{margin:0;color:var(--ink2);max-width:60ch}
+  .meta{font-size:.78rem;color:var(--ink3);margin-top:14px}
+
+  nav.toc{background:var(--card);border-radius:10px;padding:18px 22px;margin-bottom:40px}
+  nav.toc b{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+  nav.toc ol{margin:8px 0 0;padding-left:20px;columns:2;gap:32px;font-size:.88rem}
+  nav.toc li{margin-bottom:4px}
+  nav.toc a{color:var(--ink);text-decoration:none}
+  nav.toc a:hover{color:var(--rose)}
+
+  h2{font-size:1.25rem;margin:52px 0 4px;letter-spacing:-.005em;padding-top:8px}
+  h2 .no{color:var(--rose);font-variant-numeric:tabular-nums;margin-right:8px}
+  h3{font-size:.98rem;margin:28px 0 6px}
+  p{margin:10px 0;color:var(--ink2)}
+  p b,li b{color:var(--ink)}
+  ul,ol{margin:10px 0;padding-left:24px;color:var(--ink2)}
+  li{margin-bottom:6px}
+
+  .steps{counter-reset:st;list-style:none;padding:0;margin:16px 0}
+  .steps li{counter-increment:st;position:relative;padding:0 0 18px 46px;margin:0}
+  .steps li::before{content:counter(st);position:absolute;left:0;top:2px;width:28px;height:28px;border-radius:50%;
+    background:var(--rose);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+  .steps li:not(:last-child)::after{content:'';position:absolute;left:13.5px;top:34px;bottom:2px;width:1.5px;background:var(--line)}
+  .steps li b:first-child{display:block;color:var(--ink);margin-bottom:2px}
+
+  .callout{border-radius:10px;padding:14px 18px;margin:16px 0;font-size:.88rem}
+  .callout.tip{background:var(--rose-soft);border-left:3px solid var(--rose)}
+  .callout.warn{background:#F8F0E1;border-left:3px solid var(--warn)}
+  .callout.info{background:#EDF3EE;border-left:3px solid var(--ok)}
+  .callout b:first-child{display:block;margin-bottom:2px}
+
+  table{width:100%;border-collapse:collapse;font-size:.86rem;margin:14px 0}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:2px solid var(--ink)}
+  td{color:var(--ink2)} td b{color:var(--ink)}
+  .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  kbd{background:var(--card);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-size:.8rem;font-family:inherit;color:var(--ink)}
+  .btn-ref{display:inline-block;background:var(--rose);color:#fff;border-radius:6px;padding:1px 10px;font-size:.8rem;font-weight:600;white-space:nowrap}
+  .btn-ref.ghost{background:var(--card);color:var(--ink2);border:1px solid var(--line)}
+
+  .price-strip{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+  .price{flex:1;min-width:160px;background:var(--card);border-radius:10px;padding:14px 16px;text-align:center}
+  .price .n{font-size:1.4rem;font-weight:750;color:var(--rose)}
+  .price .t{font-size:.75rem;color:var(--ink3)}
+
+  footer{margin-top:64px;border-top:1px solid var(--line);padding-top:18px;font-size:.75rem;color:var(--ink3)}
+
+  @media print{
+    body{font-size:13px}
+    .wrap{max-width:100%;padding:0}
+    nav.toc ol{columns:2}
+    h2{break-after:avoid;page-break-after:avoid}
+    h2:not(:first-of-type){break-before:page;page-break-before:always}
+    .callout,table,.steps li{break-inside:avoid;page-break-inside:avoid}
+    a{color:var(--ink);text-decoration:none}
+  }
+  @page{size:A4;margin:18mm 16mm}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">User Manual · คู่มือการใช้งานฉบับละเอียด</div>
+  <h1>Mannequin Dressing Studio</h1>
+  <p>โปรแกรมเจนภาพหุ่นลองชุดแบบ Bulk ด้วย AI (GPT-Image-2 ผ่าน FAL.AI) — ใส่รูปหุ่น 1 รูป + โฟลเดอร์รูปเสื้อผ้า ได้ภาพหุ่นตัวเดิมใส่เสื้อผ้าทุกชิ้น พร้อมเครื่องมือแก้รูปครบชุด</p>
+  <div class="meta">เวอร์ชัน 0.1.0 · กรกฎาคม 2026 · รองรับ macOS (Apple Silicon) และ Windows 10/11 (64-bit)
+    · <a href="quick.html" style="color:var(--rose)">Quick Guide</a>
+    · <a href="คู่มือการใช้งาน-Mannequin-Dressing-Studio.pdf" style="color:var(--rose)">ดาวน์โหลด PDF</a></div>
+</header>
+
+<nav class="toc">
+  <b>สารบัญ</b>
+  <ol>
+    <li><a href="#install">การติดตั้ง</a></li>
+    <li><a href="#setup">ตั้งค่าครั้งแรก (สำคัญ)</a></li>
+    <li><a href="#generate">การเจนภาพแบบ Bulk</a></li>
+    <li><a href="#dashboard">หน้าติดตามงาน (Dashboard)</a></li>
+    <li><a href="#editor">การแก้รูป (Editor)</a></li>
+    <li><a href="#safety">ระบบกู้งานอัตโนมัติ</a></li>
+    <li><a href="#tips">เคล็ดลับการใช้งานจริง</a></li>
+    <li><a href="#trouble">การแก้ปัญหา</a></li>
+    <li><a href="#price">สรุปราคาและความเร็ว</a></li>
+  </ol>
+</nav>
+
+<h2 id="install"><span class="no">1</span>การติดตั้ง</h2>
+<p>โปรแกรมไม่ได้ผ่านการ sign กับ Apple/Microsoft การเปิด<b>ครั้งแรกครั้งเดียว</b>จะมีคำเตือนจากระบบปฏิบัติการ — เป็นเรื่องปกติ ทำตามขั้นตอนด้านล่างแล้วครั้งต่อไปเปิดได้ตามปกติตลอด</p>
+
+<h3>macOS (ไฟล์ .dmg)</h3>
+<ol class="steps">
+  <li><b>เปิดไฟล์ .dmg แล้วลากไอคอนโปรแกรมลงโฟลเดอร์ Applications</b>รอสักครู่ให้คัดลอกเสร็จ แล้ว eject ตัว dmg ได้เลย</li>
+  <li><b>เปิดครั้งแรก: คลิกขวาที่ไอคอน → Open → กด Open ยืนยัน</b>ถ้าระบบยังไม่ยอมเปิด ให้ไปที่ System Settings → Privacy &amp; Security → เลื่อนลงล่างสุด → กด <span class="btn-ref ghost">Open Anyway</span></li>
+  <li><b>ครั้งต่อไปดับเบิลคลิกเปิดได้ปกติ</b></li>
+</ol>
+<div class="callout warn"><b>⚠ เครื่อง Mac ที่รองรับ</b>ตัวติดตั้งนี้สำหรับ Mac ชิป Apple Silicon (M1 ขึ้นไป, ปี 2020+) — ถ้าใช้ Mac Intel รุ่นเก่า แจ้งทีมงานเพื่อขอตัวติดตั้งเวอร์ชัน Intel</div>
+
+<h3>Windows (ไฟล์ Setup .exe)</h3>
+<ol class="steps">
+  <li><b>ดับเบิลคลิกไฟล์ Setup .exe</b></li>
+  <li><b>ถ้าขึ้นจอฟ้า "Windows protected your PC"</b>กด <span class="btn-ref ghost">More info</span> แล้วกด <span class="btn-ref ghost">Run anyway</span></li>
+  <li><b>โปรแกรมติดตั้งอัตโนมัติและเปิดขึ้นมาเอง</b>ครั้งต่อไปเปิดจาก Start Menu</li>
+</ol>
+
+<h2 id="setup"><span class="no">2</span>ตั้งค่าครั้งแรก (สำคัญ — ทำก่อนใช้งาน)</h2>
+<p>เปิดโปรแกรมแล้วไปที่แท็บ <b>ตั้งค่า (Settings)</b> ทางเมนูซ้าย ค่าทั้งหมดบันทึกอัตโนมัติและจำไว้ในเครื่อง ไม่ต้องกรอกซ้ำ</p>
+<ol class="steps">
+  <li><b>วาง FAL API Key ในช่อง "API Key 1 (หลัก)"</b>คัดลอก key จากบัญชี fal.ai ของคุณ (รูปแบบ xxxx:xxxx) แล้วกดปุ่ม <span class="btn-ref ghost">ทดสอบ</span> — ต้องขึ้น <b style="color:var(--ok)">✓ ใช้ได้</b> ก่อนถึงจะเจนได้</li>
+  <li><b>(ทางเลือก) ใส่ API Key 2 ถ้าต้องการความเร็วสูงสุด</b>FAL จำกัดความเร็วต่อ 1 key ที่ ~30 งานพร้อมกัน — เพิ่ม key ที่สองแล้วเลื่อน concurrency ได้ถึง 60 ระบบจะสลับใช้ 2 key ให้เองอัตโนมัติ (ดูตารางความเร็วข้อ 9)</li>
+  <li><b>ตรวจค่าที่แนะนำ</b>จำนวนงานพร้อมกัน: <b>30</b> (หรือ 50–60 ถ้ามี 2 key) · Quality เริ่มต้น: <b>Low</b> · Auto-retry: <b>2 ครั้ง</b> · กันเครื่อง sleep: <b>เปิด</b></li>
+  <li><b>Default Prompt 2 ชุด</b>โปรแกรมมี prompt สำเร็จรูป 2 ชุด (ฉากห้องกระจก / ฉากผนัง charcoal) แก้ไขข้อความได้ในหน้านี้ — ชื่อรูปหุ่นและชื่อโฟลเดอร์เสื้อจะถูกแทนลงใน prompt ให้อัตโนมัติตอนเจน</li>
+</ol>
+<div class="callout tip"><b>💡 เรื่อง API Key</b>Key เก็บอยู่ในเครื่องคุณเท่านั้น ไม่ถูกส่งไปที่อื่นนอกจาก FAL.AI โดยตรง · ค่าใช้จ่ายการเจนทั้งหมดเรียกเก็บผ่านบัญชี fal.ai ของคุณตามจริง</div>
+
+<h2 id="generate"><span class="no">3</span>การเจนภาพแบบ Bulk</h2>
+<p>ไปที่แท็บ <b>สร้างภาพ (Generate)</b> — ทำ 5 ขั้นจากบนลงล่าง แล้วกดปุ่มเดียวจบ</p>
+<ol class="steps">
+  <li><b>เลือกรูปหุ่น (1 รูป)</b>คลิกกล่อง "รูปหุ่น" แล้วเลือกรูปหุ่นเปล่าจากเครื่อง — ใช้ได้ทั้ง JPG / PNG / WebP และ <b>HEIC จาก iPhone โดยตรง</b> (โปรแกรมแปลงและแก้การหมุนให้เอง) · ระบบจะแสดงขนาดภาพผลลัพธ์ที่จะได้ ซึ่ง<b>สัดส่วนเท่ารูปหุ่นเสมอ</b></li>
+  <li><b>เลือกโฟลเดอร์เสื้อผ้า</b>กด <span class="btn-ref ghost">เลือกโฟลเดอร์…</span> — รูปเสื้อทั้งโฟลเดอร์จะแสดงเป็นตาราง คลิกที่รูปเพื่อติ๊กออก/ติ๊กเข้ารายตัวได้ (ค่าเริ่มต้นเลือกทุกรูป)</li>
+  <li><b>เลือกมุมภาพ</b>Front (ด้านหน้า — ปกติ) / Back (หมุนหุ่น 180° เห็นหลังชุด) / Side (หันข้าง หน้าชุดเข้ากระจก) — <b>เลือกได้หลายมุมพร้อมกัน</b> 1 มุม = 1 รูปต่อเสื้อ 1 ตัว (คิดค่าเจนแยกรูป)</li>
+  <li><b>ตั้งค่าการเจน</b>เลือก Quality (<b>Low ฿0.2</b> แนะนำสำหรับงานหลัก / <b>High ฿1.5</b> เมื่อต้องการรายละเอียดผ้าสูงสุด) · เลือกโฟลเดอร์เซฟผลลัพธ์ · เลือก Default Prompt 1 หรือ 2 (หรือกด <span class="btn-ref ghost">Custom</span> พิมพ์เองเฉพาะ batch นี้)</li>
+  <li><b>ดูราคาประเมินแล้วกด "▶ เริ่มเจนทั้งหมด"</b>แถบล่างสุดจะคำนวณให้ก่อนเสมอ เช่น "48 เสื้อ × 2 มุม × Low = 96 รูป ≈ ฿19" — กดแล้วโปรแกรมพาไปหน้าติดตามงานอัตโนมัติ</li>
+</ol>
+<div class="callout info"><b>ชื่อไฟล์ผลลัพธ์</b>รูปถูกเซฟลงโฟลเดอร์ที่เลือกทันทีที่เสร็จทีละใบ ในชื่อ <kbd>ชื่อไฟล์เสื้อ_มุม_quality.png</kbd> เช่น <kbd>dress_001_front_low.png</kbd> — เปิดดูได้เลยระหว่างที่ batch ยังรันอยู่</div>
+
+<h2 id="dashboard"><span class="no">4</span>หน้าติดตามงาน (Dashboard)</h2>
+<p>แสดงสถานะทุกงานแบบเรียลไทม์ — เปิดทิ้งไว้เฉยๆ ได้เลย ระบบอัปเดตเอง</p>
+<table>
+  <thead><tr><th>สถานะ</th><th>ความหมาย</th></tr></thead>
+  <tbody>
+    <tr><td><b>รอคิว</b></td><td>รอถึงรอบส่งเข้าเจน (ระบบจำกัดจำนวนงานพร้อมกันตามที่ตั้งไว้)</td></tr>
+    <tr><td><b>อัปโหลด… / กำลังเจน / เซฟไฟล์…</b></td><td>งานกำลังทำ — เฉลี่ยใบละ 1–2 นาที</td></tr>
+    <tr><td><b style="color:var(--ok)">✓ เสร็จ</b></td><td>เจนเสร็จและ<b>เซฟลงเครื่องแล้ว</b> — การ์ดแสดงรูปผลลัพธ์ทันที</td></tr>
+    <tr><td><b style="color:var(--bad)">✗ เฟล</b></td><td>ล้มเหลวหลัง auto-retry ครบแล้ว — กดปุ่ม 🔁 Retry รายรูป หรือ "Retry ที่เฟลทั้งหมด" มุมขวาบน</td></tr>
+  </tbody>
+</table>
+<p>แถบบนแสดง: จำนวนเสร็จ/กำลังทำ/รอ/เฟล · แถบความคืบหน้า · <b>ความเร็วจริง (รูป/นาที)</b> · เวลาโดยประมาณที่เหลือ</p>
+<h3>ปุ่มบนการ์ดรูปที่เสร็จแล้ว</h3>
+<ul>
+  <li><span class="btn-ref">🎨 Edit</span> — เปิดรูปนั้นในหน้าแก้รูป (Editor)</li>
+  <li><span class="btn-ref">↻ High</span> — เจนรูปนั้นซ้ำเป็นคุณภาพ High ฿1.5 ทันที ใช้หุ่น/เสื้อ/มุม/prompt เดิมทุกอย่าง — <b>นี่คือหัวใจของโหมดผสม:</b> เจน Low ทั้งชุด แล้วอัปเกรดเฉพาะรูปที่ต้องการ</li>
+  <li><span class="btn-ref ghost">⏸ พักงาน</span> — หยุดส่งงานใหม่ชั่วคราว (งานที่กำลังเจนอยู่ทำต่อจนจบ) กดอีกครั้งเพื่อทำต่อ</li>
+</ul>
+
+<h2 id="editor"><span class="no">5</span>การแก้รูป (Editor)</h2>
+<p>กด <span class="btn-ref">🎨 Edit</span> จากรูปที่เสร็จใน Dashboard — ระบบ<b>จำให้เองว่ารูปนี้เจนมาจากเสื้อตัวไหน</b> ทุกการเจนใหม่จะแนบรูปเสื้อต้นฉบับไปเทียบอัตโนมัติ ไม่ต้องอัปโหลดซ้ำ</p>
+<table>
+  <thead><tr><th>เครื่องมือ</th><th>ประเภท</th><th>วิธีใช้</th></tr></thead>
+  <tbody>
+    <tr><td><b>① ความสั้น–ยาวของชุด</b></td><td class="num">เจนใหม่ · ฿1.5</td><td>เลือก "สั้นลง" หรือ "ยาวขึ้น" → ลาก slider 10–50% (ทีละ 5%) → กด Generate · % เป็นค่าประมาณจาก AI — ระดับใกล้กัน (ห่าง 5%) ผลอาจใกล้เคียงกัน ถ้าไม่ถูกใจกดเจนซ้ำได้</td></tr>
+    <tr><td><b>② Match สีให้ตรงต้นฉบับ</b></td><td class="num">เจนใหม่ · ฿1.5</td><td>กดปุ่มเดียว — ใช้เมื่อรู้สึกว่าสี/ลายของผลเจนเพี้ยนจากเสื้อจริง ระบบส่งรูปต้นฉบับไปเทียบและแก้ให้โดยไม่เปลี่ยนทรง</td></tr>
+    <tr><td><b>③ Dull ⟷ Vibrant</b></td><td class="num" style="color:var(--ok)">ทันที · ฟรี</td><td>ลาก slider ลด/เพิ่มความสดของสี (−50 ถึง +50) เห็นผลทันทีบนรูป</td></tr>
+    <tr><td><b>④ สว่าง ⟷ มืด (Exposure)</b></td><td class="num" style="color:var(--ok)">ทันที · ฟรี</td><td>ปรับความสว่างแบบปุ่ม Exposure ใน iPhone Photos ใช้คู่กับข้อ ③ ได้</td></tr>
+  </tbody>
+</table>
+<ul>
+  <li>เครื่องมือ ①–② ส่งงานเข้าคิวใน Dashboard — ผลออกเป็น<b>ไฟล์ใหม่</b> (ต่อท้าย <kbd>_edit</kbd>) ไม่ทับของเดิม</li>
+  <li>เครื่องมือ ③–④ เมื่อปรับแล้วกด <span class="btn-ref">💾 บันทึกเป็นไฟล์ใหม่</span> — ได้ไฟล์ <kbd>_adj</kbd> เพิ่ม ต้นฉบับอยู่ครบ</li>
+  <li>แถบ "เวอร์ชัน" ใต้รูปใช้สลับดูต้นฉบับ/ผลแก้ไขทุกรุ่นของรูปนั้น</li>
+</ul>
+
+<h2 id="safety"><span class="no">6</span>ระบบกู้งานอัตโนมัติ — ปิดเครื่อง/ไฟดับ ไม่มีปัญหา</h2>
+<ul>
+  <li>ทุกงานบันทึกลงฐานข้อมูลในเครื่องตลอดเวลา — <b>ปิดโปรแกรม, เครื่องดับ, เน็ตหลุด แล้วเปิดใหม่ = ทำต่อจากจุดเดิมอัตโนมัติ</b></li>
+  <li>งานที่ส่งเข้าระบบ AI ไปแล้วตอนเกิดเหตุ จะถูกติดตามต่อจากงานเดิม — <b>ไม่เจนซ้ำ ไม่เสียเงินซ้ำ</b></li>
+  <li>รูปที่เสร็จแล้วไม่ถูกแตะต้อง ระบบทำเฉพาะส่วนที่ค้าง (ทดสอบจริงแล้ว: ปิดโปรแกรมกลาง batch 50 รูป เปิดใหม่จบครบ 50/50)</li>
+  <li>ระหว่างมีงานรัน โปรแกรมกันเครื่อง sleep ให้อัตโนมัติ — <b>รันข้ามคืนได้</b> แค่เสียบปลั๊กและต่อเน็ตทิ้งไว้</li>
+</ul>
+
+<h2 id="tips"><span class="no">7</span>เคล็ดลับการใช้งานจริง</h2>
+<ul>
+  <li><b>โหมดผสมประหยัดสุด:</b> เจนทั้งชุดด้วย Low ฿0.2 → ไล่ดูผล → กด ↻ High เฉพาะรูปที่จะใช้จริงหรือรายละเอียดยังไม่พอ — ที่ 10,000 รูป ต่างกัน ฿1,800 vs ฿15,000</li>
+  <li><b>งานใหญ่ให้รันข้ามคืน:</b> ตั้ง batch ก่อนเลิกงาน เช้ามาเก็บผล — ความเร็ว ~18–20 รูป/นาที ได้คืนละ 10,000+ รูปสบายๆ</li>
+  <li><b>รูปหุ่นถ่ายครั้งเดียวใช้ตลอด:</b> ระบบอัปโหลดรูปหุ่นครั้งเดียวต่อ batch — ใช้รูปหุ่นเดิมทุก batch จะได้ภาพชุดที่ฉากสม่ำเสมอทั้งแคตตาล็อก</li>
+  <li><b>ตั้งชื่อไฟล์เสื้อให้ดี:</b> ชื่อไฟล์เสื้อ = ชื่อไฟล์ผลลัพธ์ ใช้รหัสสินค้าเป็นชื่อไฟล์จะจับคู่กลับง่ายที่สุด</li>
+  <li><b>ถ่ายจาก iPhone ได้เลย:</b> ไฟล์ HEIC และรูปที่ถ่ายแนวไหนก็ตาม โปรแกรมแปลงและจัดการการหมุนให้อัตโนมัติ</li>
+  <li><b>เจนซ้ำ = สุ่มใหม่:</b> AI ให้ผลไม่ซ้ำกันทุกครั้ง ถ้ารูปไหนไม่ถูกใจ (สีเพี้ยน ท่าแปลก) กด Retry/เจนใหม่ได้เลย ค่าใช้จ่ายแค่รูปนั้นรูปเดียว</li>
+</ul>
+
+<h2 id="trouble"><span class="no">8</span>การแก้ปัญหา</h2>
+<table>
+  <thead><tr><th>อาการ</th><th>วิธีแก้</th></tr></thead>
+  <tbody>
+    <tr><td>กดเริ่มเจนไม่ได้ (ปุ่มเทา)</td><td>เช็คว่าครบ 4 อย่าง: รูปหุ่น · เลือกเสื้ออย่างน้อย 1 · เลือกมุมอย่างน้อย 1 · เลือกโฟลเดอร์เซฟผล และใส่ API Key แล้วในหน้าตั้งค่า</td></tr>
+    <tr><td>ทดสอบ Key ขึ้น ✗ ใช้ไม่ได้</td><td>เช็คว่าคัดลอก key ครบทั้งเส้น (มีเครื่องหมาย : คั่นกลาง) · เช็คยอดเงิน/สถานะบัญชีที่ fal.ai</td></tr>
+    <tr><td>งานเฟลหลายรูปติดกัน</td><td>มักเป็นปัญหาเน็ตหรือเครดิต FAL หมด — เช็คเน็ต เช็คยอดที่ fal.ai แล้วกด "Retry ที่เฟลทั้งหมด"</td></tr>
+    <tr><td>ช้ากว่าที่คาด</td><td>เวลาเจนของ AI แกว่งตามช่วงเวลา (1–2 นาที/รูป) · เพิ่ม concurrency ในตั้งค่า (สูงสุด 30 ต่อ 1 key) · เพิ่ม API Key 2</td></tr>
+    <tr><td>สีผลลัพธ์เพี้ยนจากเสื้อจริง</td><td>เปิดรูปใน Editor → กด Match Color (฿1.5) — ระบบเทียบกับรูปต้นฉบับให้อัตโนมัติ</td></tr>
+    <tr><td>รูปหุ่น/ผลลัพธ์เอียงหรือกลับหัว</td><td>ไม่ควรเกิด (ระบบแก้ EXIF ให้แล้ว) — ถ้าเจอ ให้เปิดรูปต้นทางในโปรแกรมดูรูปแล้ว export เป็น JPG ใหม่ก่อนใช้ และแจ้งทีมงาน</td></tr>
+    <tr><td>อยากรู้ว่าไฟล์ผลอยู่ไหน</td><td>โฟลเดอร์ที่เลือกไว้ในขั้นตอนที่ 4 ของหน้าสร้างภาพ — ไฟล์เข้าทันทีที่แต่ละรูปเสร็จ</td></tr>
+  </tbody>
+</table>
+
+<h2 id="price"><span class="no">9</span>สรุปราคาและความเร็ว</h2>
+<div class="price-strip">
+  <div class="price"><div class="n">฿0.2</div><div class="t">ต่อรูป · Quality Low<br>เหมาะกับงานหลัก</div></div>
+  <div class="price"><div class="n">฿1.5</div><div class="t">ต่อรูป · Quality High<br>รายละเอียดผ้าสูงสุด</div></div>
+  <div class="price"><div class="n">฿1.5</div><div class="t">ต่อครั้ง · แก้รูปแบบเจนใหม่<br>(สั้น-ยาว / Match สี)</div></div>
+  <div class="price"><div class="n">ฟรี</div><div class="t">Dull/Vibrant · Exposure<br>ปรับในเครื่อง ไม่จำกัด</div></div>
+</div>
+<table>
+  <thead><tr><th>การตั้งค่า</th><th>ความเร็วโดยประมาณ</th><th>10,000 รูปใช้เวลา</th></tr></thead>
+  <tbody>
+    <tr><td>1 key · concurrency 30</td><td class="num">~18–20 รูป/นาที</td><td class="num">~9 ชม. (ข้ามคืนจบ)</td></tr>
+    <tr><td>2 keys · concurrency 60</td><td class="num">~35–40 รูป/นาที</td><td class="num">~4.5 ชม.</td></tr>
+  </tbody>
+</table>
+<p style="font-size:.8rem;color:var(--ink3)">ราคาอ้างอิง $0.005 / $0.042 ต่อรูปที่ขนาด 1152×1536 · อัตราแลกเปลี่ยน ~36฿/$ · ค่าใช้จ่ายเรียกเก็บผ่านบัญชี fal.ai ของคุณโดยตรง</p>
+
+<footer>Mannequin Dressing Studio v0.1.0 — คู่มือการใช้งาน · กรกฎาคม 2026 · มีปัญหาการใช้งานติดต่อทีมพัฒนา</footer>
+</div>
+</body>
+</html>
