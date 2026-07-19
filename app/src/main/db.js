@@ -5,7 +5,7 @@ import { DEFAULT_PROMPT_1, DEFAULT_PROMPT_2 } from './prompts'
 const SETTINGS_DEFAULTS = {
   apiKey1: '',
   apiKey2: '',
-  concurrency: 20,
+  concurrency: 30,
   defaultQuality: 'low',
   autoRetry: 2,
   outputFormat: 'png',

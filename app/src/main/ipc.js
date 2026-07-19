@@ -4,7 +4,7 @@ import path from 'path'
 import sizeOf from 'image-size'
 import { getSettings, setSettings } from './db'
 import * as fal from './falClient'
-import { buildPrompt, lengthPrompt, colorMatchPrompt } from './prompts'
+import { buildPrompt, lengthPrompt, colorMatchPrompt, DEFAULT_PROMPT_1, DEFAULT_PROMPT_2 } from './prompts'
 
 const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.heic', '.heif'])
 
@@ -22,7 +22,12 @@ async function normalizeToCache(p) {
 export function registerIpc(db, qm, getWin) {
   const h = (ch, fn) => ipcMain.handle(ch, (_e, args) => fn(args))
 
-  h('settings:get', () => ({ settings: getSettings(db), prices: fal.PRICE_USD }))
+  h('settings:get', () => ({
+    settings: getSettings(db),
+    prices: fal.PRICE_USD,
+    pricesThb: fal.PRICE_THB,
+    promptDefaults: { prompt1: DEFAULT_PROMPT_1, prompt2: DEFAULT_PROMPT_2 }
+  }))
   h('settings:set', (patch) => setSettings(db, patch))
 
   h('pick:image', async () => {

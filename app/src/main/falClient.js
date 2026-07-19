@@ -8,6 +8,8 @@ export const MODEL = 'openai/gpt-image-2/edit'
 // UI ใช้ชื่อ High/Low ตามภาษาลูกค้า — แมปเป็นระดับจริงของ FAL
 export const QUALITY_MAP = { high: 'medium', low: 'low' }
 export const PRICE_USD = { high: 0.042, low: 0.005 }
+// ราคา ฿ ที่สื่อสารกับลูกค้า — ใช้คำนวณกล่องประมาณการให้ตรงกับคู่มือ (QA BUG-3/DOC-1)
+export const PRICE_THB = { high: 1.5, low: 0.2 }
 
 const MIME = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' }
 

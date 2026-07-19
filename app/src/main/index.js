@@ -4,6 +4,7 @@ import { pathToFileURL } from 'url'
 import { initDb } from './db'
 import { registerIpc } from './ipc'
 import { QueueManager } from './queueManager'
+import { prepareImage } from './falClient'
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'media', privileges: { stream: true } }])
 
@@ -25,9 +26,19 @@ function createWindow() {
 
 app.whenReady().then(() => {
   // เสิร์ฟไฟล์รูปในเครื่องให้ <img> ใน renderer (thumbnail grid)
-  protocol.handle('media', (req) => {
+  const thumbCache = new Map()
+  protocol.handle('media', async (req) => {
     let p = decodeURIComponent(new URL(req.url).pathname)
     if (process.platform === 'win32') p = p.replace(/^\//, '')
+    if (/\.hei[cf]$/i.test(p)) {
+      // Chromium แสดง HEIC ใน <img> ไม่ได้ — แปลงเป็น JPEG ให้ที่นี่ (BUG-4 จาก QA Windows)
+      if (!thumbCache.has(p)) {
+        if (thumbCache.size > 200) thumbCache.clear()
+        const { buffer } = await prepareImage(p)
+        thumbCache.set(p, buffer)
+      }
+      return new Response(thumbCache.get(p), { headers: { 'content-type': 'image/jpeg' } })
+    }
     return net.fetch(pathToFileURL(p).toString())
   })
 

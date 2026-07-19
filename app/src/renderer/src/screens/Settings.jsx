@@ -29,7 +29,7 @@ export default function Settings({ config, onSaved, showToast }) {
           <div className="field">
             <label>API Key 1 (หลัก)</label>
             <div className="key-row">
-              <input type="password" value={s.apiKey1} onChange={(e) => save({ apiKey1: e.target.value })} placeholder="fal-xxxxxxxx" />
+              <input type="password" value={s.apiKey1} onChange={(e) => save({ apiKey1: e.target.value })} placeholder="xxxxxxxx:xxxxxxxx (มี : คั่นกลาง)" />
               <button className="btn ghost" onClick={() => testKey(s.apiKey1, setTest1)}>ทดสอบ</button>
               {test1 && (test1.testing ? <span className="okmark">…</span> : test1.ok ? <span className="okmark">✓ ใช้ได้</span> : <span className="badmark" title={test1.error}>✗ ใช้ไม่ได้</span>)}
             </div>
@@ -90,9 +90,11 @@ export default function Settings({ config, onSaved, showToast }) {
           <button
             className="btn ghost"
             onClick={async () => {
-              await window.api.invoke('settings:set', { prompt1: config.settings.prompt1, prompt2: config.settings.prompt2 })
-              showToast('รีเซ็ต prompt แล้ว — ปิด/เปิดหน้านี้ใหม่เพื่อเห็นค่าเดิม')
+              const d = config.promptDefaults
+              setS((prev) => ({ ...prev, prompt1: d.prompt1, prompt2: d.prompt2 }))
+              await window.api.invoke('settings:set', { prompt1: d.prompt1, prompt2: d.prompt2 })
               onSaved()
+              showToast('รีเซ็ต prompt กลับเป็นค่าตั้งต้นจากโรงงานแล้ว')
             }}
           >
             Reset prompts เป็นค่าตั้งต้น

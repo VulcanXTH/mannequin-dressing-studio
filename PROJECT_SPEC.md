@@ -83,7 +83,7 @@ Desktop application (macOS + Windows) สำหรับธุรกิจแฟ
 
 ### 5.5 Settings
 - API Key 1 (บังคับ) + Key 2 (option) + ปุ่มทดสอบ key
-- Concurrency (1–30, default 20), Quality เริ่มต้น, Auto-retry (0/2/3), Output format
+- Concurrency (default 30, สูงสุด 30/key — 60 เมื่อมี 2 key), Quality เริ่มต้น, Auto-retry (0/2/3) — output format ตัดจาก scope: fix เป็น PNG (v0.1.1)
 - กันเครื่อง sleep ระหว่างรันงาน (default เปิด)
 - แก้ไข Default Prompt ทั้ง 2 ชุดได้ + ปุ่ม reset
 
@@ -150,6 +150,26 @@ Desktop application (macOS + Windows) สำหรับธุรกิจแฟ
 - **Installers รอบสุดท้าย** (รวม lengthPrompt v2 + ระบบ 2 key): `app/dist/*.dmg` (114MB) + `app/dist/*Setup*.exe` (98MB)
 - **คู่มือละเอียด + Quick Guide** (HTML + PDF): โฟลเดอร์ `manual/` — online: https://mannequin-dressing-studio.vercel.app/manual/ และ `/manual/quick.html` · PDF ดาวน์โหลดได้จากทั้งสองหน้า
 - Dashboard ผลทดสอบ: https://mannequin-dressing-studio.vercel.app/report/ · Mockup: หน้าแรกโดเมนเดิม
+
+## 8.5 QA Windows จริง + แก้เป็น v0.1.1 (16–17 ก.ค. 2026)
+
+QA อิสระบน Windows 11 จริง (รายงาน 3 ฉบับ, ตรวจคู่มือ 56 claims): **ติดตั้ง+เจน E2E ผ่าน** (HEIC+ชื่อไฟล์ไทย, 2/2 ใน 45 วิ, กระจก re-dress ถูก) แต่พบ bug — แก้ครบใน v0.1.1:
+
+| ประเด็น | การแก้ |
+|---|---|
+| BUG-1 (blocker Win): preview แตกทุกจุด — `media://` 2 slash ทำ drive letter หายบน Windows | รวม helper เป็น `renderer/src/media.js` เดียว ใช้ `media:///` + strip leading slash |
+| BUG-2: ปุ่ม Reset prompt เป็น no-op | ipc ส่ง `promptDefaults` (ค่าโรงงานจริง) ให้ renderer ใช้ |
+| BUG-3: ฿ ปัดเป็นจำนวนเต็ม (฿0.4 โชว์ ฿0) + DOC-1 คู่มือ ฿19 vs แอป ฿17 | เปลี่ยนสูตร ฿ ในแอปเป็นเรตลูกค้าตรงๆ (`PRICE_THB` 0.2/1.5) + แสดงทศนิยม → เลขตรงคู่มือทุกจุด (คู่มืออัปเดตเป็น ฿19.2) |
+| BUG-4: HEIC ไม่แสดง thumbnail (Chromium ไม่รองรับ) | protocol handler `media` แปลง HEIC→JPEG on-the-fly + in-memory cache |
+| Placeholder key `fal-xxxxxxxx` ขัดกับรูปแบบจริง | เปลี่ยนเป็น `xxxxxxxx:xxxxxxxx (มี : คั่นกลาง)` |
+| Concurrency default 20 ≠ spec 30 | default ในโค้ด = 30 |
+| ช่องโฟลเดอร์ผลลัพธ์หายเมื่อกลับหน้า Generate | จำล่าสุดใน settings (`lastOutputFolder`) |
+| DOC-2 ความเร็ว extrapolate เกินค่าที่วัด | คู่มือใส่ hedge: "~15–20 รูป/นาที* แปรตามฝั่ง FAL (วัดจริง 12–20)" · 2 key = "≈ ×2 (ยังไม่ load-test)" |
+| DOC-3 tip Retry ชวนเข้าใจผิด | แยกชัด: เฟล→Retry / เสร็จแต่ไม่ถูกใจ→↻High ฿1.5 |
+| จุดย่อย label แท็บ/ตำแหน่งปุ่ม ⏸/footnote ขนาด | แก้คู่มือครบ |
+
+- Resume edge case (crash ระหว่างเขียนไฟล์→ไฟล์ `_v1` ซ้ำ 1 ใบ ไม่เสียเงินเพิ่ม): รับทราบ ยอมรับได้ ไม่แก้ใน v0.1.1
+- v0.1.1 ยัง**ไม่ได้ retest บน Windows จริง** — QA เสนอ smoke test รอบสองหลัง rebuild
 
 ## 9. โครงสร้าง repo (ปัจจุบัน)
 

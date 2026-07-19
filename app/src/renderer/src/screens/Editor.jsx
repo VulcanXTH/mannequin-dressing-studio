@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-
-const media = (p) => 'media://' + encodeURI(p.replace(/\\/g, '/'))
+import { media } from '../media'
 
 export default function Editor({ jobId, setJobId, showToast }) {
   const [job, setJob] = useState(null)

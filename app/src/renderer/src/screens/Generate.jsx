@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
+import { media } from '../media'
 
-const media = (p) => 'media://' + encodeURI(p.replace(/\\/g, '/'))
 const VIEWS = [
   ['front', 'Front — ด้านหน้า', 'ตามปกติ'],
   ['back', 'Back — ด้านหลัง', 'หมุนหุ่น 180°'],
@@ -8,7 +8,7 @@ const VIEWS = [
 ]
 
 export default function Generate({ config, onStarted, showToast }) {
-  const { settings, prices } = config
+  const { settings, prices, pricesThb } = config
   const [mannequin, setMannequin] = useState(null)
   const [folder, setFolder] = useState(null)
   const [excluded, setExcluded] = useState(new Set())
@@ -17,7 +17,7 @@ export default function Generate({ config, onStarted, showToast }) {
   const [promptId, setPromptId] = useState(1)
   const [useCustom, setUseCustom] = useState(false)
   const [customPrompt, setCustomPrompt] = useState('')
-  const [outputFolder, setOutputFolder] = useState('')
+  const [outputFolder, setOutputFolder] = useState(settings.lastOutputFolder || '')
   const [starting, setStarting] = useState(false)
 
   const pickMannequin = async () => {
@@ -33,7 +33,10 @@ export default function Generate({ config, onStarted, showToast }) {
   }
   const pickOutput = async () => {
     const p = await window.api.invoke('pick:outputFolder')
-    if (p) setOutputFolder(p)
+    if (p) {
+      setOutputFolder(p)
+      window.api.invoke('settings:set', { lastOutputFolder: p }) // จำไว้ให้รอบหน้า
+    }
   }
   const toggleView = (v) =>
     setViews((prev) => {
@@ -51,7 +54,9 @@ export default function Generate({ config, onStarted, showToast }) {
   const selected = folder ? folder.files.filter((f) => !excluded.has(f.path)) : []
   const jobCount = selected.length * views.size
   const usd = jobCount * (prices[quality] || 0)
-  const thb = usd * (settings.thbRate || 36)
+  // ฿ คิดจากเรตที่สื่อสารกับลูกค้า (฿0.2/฿1.5) ให้ตรงกับคู่มือ — ไม่ปัดเศษทิ้งใน batch เล็ก
+  const thb = jobCount * (pricesThb[quality] || 0)
+  const thbText = thb % 1 ? thb.toFixed(2).replace(/0$/, '') : String(thb)
 
   const canStart = mannequin && selected.length > 0 && views.size > 0 && outputFolder && settings.apiKey1 && !starting
 
@@ -185,7 +190,7 @@ export default function Generate({ config, onStarted, showToast }) {
         <div className="cost">
           ประมาณการ:{' '}
           <b>
-            {selected.length} เสื้อ × {views.size} มุม × {quality === 'high' ? 'High' : 'Low'} = {jobCount} รูป ≈ ฿{thb.toFixed(0)}
+            {selected.length} เสื้อ × {views.size} มุม × {quality === 'high' ? 'High' : 'Low'} = {jobCount} รูป ≈ ฿{thbText}
           </b>{' '}
           (${usd.toFixed(2)})
           <br />

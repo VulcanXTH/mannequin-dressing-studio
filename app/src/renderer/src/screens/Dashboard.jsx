@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
+import { media } from '../media'
 
-const media = (p) => 'media://' + encodeURI(p.replace(/\\/g, '/'))
 const ST_LABEL = { queued: 'รอคิว', uploading: 'อัปโหลด…', running: 'กำลังเจน', saving: 'เซฟไฟล์…', done: '✓ เสร็จ', failed: '✗ เฟล' }
 
 export default function Dashboard({ config, batchId, setBatchId, openEditor, showToast }) {
