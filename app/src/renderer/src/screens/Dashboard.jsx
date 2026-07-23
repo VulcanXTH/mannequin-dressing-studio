@@ -87,6 +87,25 @@ export default function Dashboard({ config, batchId, setBatchId, openEditor, sho
             🔁 Retry ที่เฟลทั้งหมด ({failed})
           </button>
         )}
+        <button
+          className="btn ghost"
+          title="ลบ batch นี้ออกจากรายการ (ไฟล์รูปที่เซฟไว้ในเครื่องไม่ถูกลบ)"
+          onClick={async () => {
+            const activeAll = active + queued
+            const msg =
+              activeAll > 0
+                ? `batch นี้ยังมีงานค้าง ${activeAll} งาน — ลบแล้วงานที่ค้างจะถูกยกเลิกถาวร (รูปที่เจนเสร็จและเซฟไว้ในเครื่องไม่ถูกลบ)\n\nยืนยันลบ batch #${batch.id}?`
+                : `ลบ batch #${batch.id} ออกจากรายการ?\n(ไฟล์รูปที่เซฟไว้ในเครื่องไม่ถูกลบ)`
+            if (window.confirm(msg)) {
+              await window.api.invoke('batch:delete', { batchId: batch.id })
+              setBatchId(null)
+              load()
+              showToast('ลบ batch แล้ว — ไฟล์รูปในเครื่องยังอยู่ครบ')
+            }
+          }}
+        >
+          🗑 ลบ batch
+        </button>
       </div>
 
       <div className="stats">
@@ -108,7 +127,11 @@ export default function Dashboard({ config, batchId, setBatchId, openEditor, sho
       <div className="jobs">
         {jobs.map((j) => (
           <div className="job" key={j.id}>
-            <div className="pic">
+            <div
+              className={'pic' + (j.status === 'done' ? ' clickable' : '')}
+              title={j.status === 'done' ? 'คลิกเพื่อเปิดในหน้าแก้ไขภาพ' : undefined}
+              onClick={() => j.status === 'done' && openEditor(j.id)}
+            >
               {j.status === 'done' && j.output_path ? (
                 <img src={media(j.output_path)} alt="" loading="lazy" />
               ) : j.status === 'running' || j.status === 'uploading' ? (

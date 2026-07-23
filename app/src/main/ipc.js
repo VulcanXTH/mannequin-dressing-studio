@@ -73,12 +73,12 @@ export function registerIpc(db, qm, getWin) {
     }
   })
 
-  h('batch:create', ({ mannequinPath, garmentPaths, views, quality, promptId, customPrompt, outputFolder }) => {
+  h('batch:create', ({ mannequinPath, garments, views, quality, promptId, customPrompt, outputFolder }) => {
     const s = getSettings(db)
     const dim = sizeOf(mannequinPath)
     const { width, height } = fal.computeSize(dim.width, dim.height)
     const template = customPrompt || (promptId === 2 ? s.prompt2 : s.prompt1)
-    const folderName = path.basename(path.dirname(garmentPaths[0]))
+    const folderName = path.basename(path.dirname(garments[0].path))
     const now = Date.now()
 
     const info = db
@@ -90,14 +90,18 @@ export function registerIpc(db, qm, getWin) {
     const ins = db.prepare(`INSERT INTO jobs(batch_id,kind,garment_path,view,quality,prompt,base_image,created_at)
                             VALUES(?,?,?,?,?,?,?,?)`)
     const tx = db.transaction(() => {
-      for (const gp of garmentPaths)
+      for (const g of garments)
         for (const view of views) {
-          const prompt = buildPrompt({ template, mannequinName: path.basename(mannequinPath), folderName, view })
+          // ชุดที่มีรูปหลังแยก (_back): มุม Back ใช้รูปหลังเป็น ref แทน
+          const useBackRef = view === 'back' && g.backPath
+          const gp = useBackRef ? g.backPath : g.path
+          let prompt = buildPrompt({ template, mannequinName: path.basename(mannequinPath), folderName, view })
+          if (useBackRef) prompt += ' The reference image shows the back side of the garment.'
           ins.run(batchId, 'generate', gp, view, quality, prompt, 'mannequin', now)
         }
     })
     tx()
-    return { batchId, jobCount: garmentPaths.length * views.length }
+    return { batchId, jobCount: garments.length * views.length }
   })
 
   h('batches:list', () =>
@@ -113,6 +117,14 @@ export function registerIpc(db, qm, getWin) {
 
   h('job:retry', ({ jobId }) => qm.retry(jobId))
   h('batch:retryFailed', ({ batchId }) => qm.retryAllFailed(batchId))
+
+  // ลบ batch ออกจากรายการ — งานค้างถูกยกเลิก แต่ไฟล์ผลลัพธ์บนดิสก์ไม่ถูกแตะ
+  h('batch:delete', ({ batchId }) => {
+    db.prepare('DELETE FROM jobs WHERE batch_id=?').run(batchId)
+    db.prepare('DELETE FROM batches WHERE id=?').run(batchId)
+    qm.notify()
+    return { ok: true }
+  })
   h('queue:pause', () => qm.setPaused(true))
   h('queue:resume', () => qm.setPaused(false))
 

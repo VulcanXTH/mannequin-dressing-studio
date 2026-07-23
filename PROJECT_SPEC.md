@@ -171,6 +171,19 @@ QA อิสระบน Windows 11 จริง (รายงาน 3 ฉบั
 - Resume edge case (crash ระหว่างเขียนไฟล์→ไฟล์ `_v1` ซ้ำ 1 ใบ ไม่เสียเงินเพิ่ม): รับทราบ ยอมรับได้ ไม่แก้ใน v0.1.1
 - v0.1.1 ยัง**ไม่ได้ retest บน Windows จริง** — QA เสนอ smoke test รอบสองหลัง rebuild
 
+## 8.6 Feedback ลูกค้ารอบใช้งานจริง → v0.1.2 (20 ก.ค. 2026)
+
+| คำขอ | การทำ |
+|---|---|
+| Editor: ขยายภาพใหญ่ขึ้น ย่อแผงตั้งค่า | grid เปลี่ยนเป็น `1.35fr : minmax(300px,430px)`, ภาพสูงได้ 74vh, tool padding กระชับ |
+| เจนเสร็จ คลิกที่รูปแล้วไปหน้า edit | การ์ดรูปสถานะเสร็จ คลิกได้ทั้งรูป (hover บอก) |
+| ขอปุ่มลบ batch | ปุ่ม 🗑 ลบ batch ที่ header Dashboard + `batch:delete` IPC — งานค้างถูกยกเลิก ไฟล์บนดิสก์ไม่ถูกลบ มี confirm |
+| ชุดเดียวใส่ ref หน้า/หลังแยก | จับคู่จากชื่อไฟล์ `_front`/`_back` (รองรับ `-`, เว้นวรรค, ตัวใหญ่, ชื่อไทย) → grid แสดงเป็น 1 ชุด + ป้าย "หน้า+หลัง", มุม Back ใช้รูปหลังเป็น ref + เติม prompt "The reference image shows the back side of the garment." |
+
+- คู่มือ + Quick Guide + PDF อัปเดตเป็น v0.1.2 และ deploy แล้ว (deploy ผ่านสำเนาไร้ .git — Vercel commit-author block ยังไม่ได้แก้ถาวร: แนะนำเชื่อม GitHub เข้า Vercel account หรือย้ายไป Git integration)
+- หมายเหตุ dev: การแพ็ก `--win` ทับ better-sqlite3 ใน node_modules เป็นไบนารี Windows — ก่อน `npm run dev` บน mac ให้รัน `npx electron-builder install-app-deps`
+- v0.1.2 ผ่าน mac dev smoke — **ยังไม่ retest บน Windows** (รวม v0.1.1 fixes ด้วย)
+
 ## 9. โครงสร้าง repo (ปัจจุบัน)
 
 - `index.html` — mockup ที่ deploy บน Vercel (project: `vulcanxs-projects/mannequin-dressing-studio`) — จะแยกออกจาก source ของแอปจริงเมื่อเริ่มเฟส 0 (แอปจริงอยู่ใน `app/`)

@@ -3,9 +3,34 @@ import { media } from '../media'
 
 const VIEWS = [
   ['front', 'Front — ด้านหน้า', 'ตามปกติ'],
-  ['back', 'Back — ด้านหลัง', 'หมุนหุ่น 180°'],
+  ['back', 'Back — ด้านหลัง', 'หมุนหุ่น 180° (ถ้ามีรูป _back จะใช้เป็น ref เอง)'],
   ['side', 'Side — ด้านข้าง', 'หมุนหุ่น 110° หันหน้าชุดเข้ากระจกเล็กน้อย']
 ]
+
+// จับคู่รูปหน้า/หลังของชุดเดียวกันจากชื่อไฟล์: ลงท้าย _front / _back (หรือ -front / -back)
+// เช่น dress01_front.jpg + dress01_back.jpg → 1 ชุด · ไฟล์ที่ไม่เข้าคู่ = ชุดเดี่ยวตามเดิม
+function groupGarments(files) {
+  const paired = new Map()
+  const singles = []
+  for (const f of files) {
+    const base = f.name.replace(/\.[^.]+$/, '')
+    const m = base.match(/^(.+?)[ _-](front|back)$/i)
+    if (m) {
+      const key = m[1].toLowerCase()
+      const g = paired.get(key) || { key: m[1], front: null, back: null }
+      g[m[2].toLowerCase()] = f
+      paired.set(key, g)
+    } else {
+      singles.push({ key: base, front: f, back: null })
+    }
+  }
+  const groups = []
+  for (const g of paired.values()) {
+    if (g.front) groups.push(g)
+    else groups.push({ key: g.key, front: g.back, back: null }) // มีแต่ _back → ใช้เป็นชุดเดี่ยว
+  }
+  return [...groups, ...singles].sort((a, b) => a.key.localeCompare(b.key))
+}
 
 export default function Generate({ config, onStarted, showToast }) {
   const { settings, prices, pricesThb } = config
@@ -44,14 +69,15 @@ export default function Generate({ config, onStarted, showToast }) {
       next.has(v) ? next.delete(v) : next.add(v)
       return next
     })
-  const toggleGarment = (p) =>
+  const toggleGarment = (key) =>
     setExcluded((prev) => {
       const next = new Set(prev)
-      next.has(p) ? next.delete(p) : next.add(p)
+      next.has(key) ? next.delete(key) : next.add(key)
       return next
     })
 
-  const selected = folder ? folder.files.filter((f) => !excluded.has(f.path)) : []
+  const groups = folder ? groupGarments(folder.files) : []
+  const selected = groups.filter((g) => !excluded.has(g.key))
   const jobCount = selected.length * views.size
   const usd = jobCount * (prices[quality] || 0)
   // ฿ คิดจากเรตที่สื่อสารกับลูกค้า (฿0.2/฿1.5) ให้ตรงกับคู่มือ — ไม่ปัดเศษทิ้งใน batch เล็ก
@@ -65,7 +91,7 @@ export default function Generate({ config, onStarted, showToast }) {
     try {
       const { batchId } = await window.api.invoke('batch:create', {
         mannequinPath: mannequin.path,
-        garmentPaths: selected.map((f) => f.path),
+        garments: selected.map((g) => ({ path: g.front.path, backPath: g.back ? g.back.path : null })),
         views: [...views],
         quality,
         promptId,
@@ -113,20 +139,24 @@ export default function Generate({ config, onStarted, showToast }) {
           {folder && (
             <>
               <div className="thumbs">
-                {folder.files.map((f) => (
+                {groups.map((g) => (
                   <div
-                    key={f.path}
-                    className={'th' + (excluded.has(f.path) ? ' off' : '')}
-                    onClick={() => toggleGarment(f.path)}
-                    title={f.name}
+                    key={g.key}
+                    className={'th' + (excluded.has(g.key) ? ' off' : '')}
+                    onClick={() => toggleGarment(g.key)}
+                    title={g.key + (g.back ? ' (มีรูปหน้า+หลัง)' : '')}
                   >
-                    <img src={media(f.path)} alt={f.name} loading="lazy" />
-                    {!excluded.has(f.path) && <span className="ck">✓</span>}
+                    <img src={media(g.front.path)} alt={g.key} loading="lazy" />
+                    {!excluded.has(g.key) && <span className="ck">✓</span>}
+                    {g.back && <span className="pair-badge">หน้า+หลัง</span>}
                   </div>
                 ))}
               </div>
               <p style={{ fontSize: '.76rem', color: 'var(--tx2)', margin: '10px 0 0' }}>
-                เลือกแล้ว <b style={{ color: 'var(--tx)' }}>{selected.length} / {folder.files.length} รูป</b> · คลิกรูปเพื่อติ๊กออก/เข้า
+                เลือกแล้ว <b style={{ color: 'var(--tx)' }}>{selected.length} / {groups.length} ชุด</b> · คลิกรูปเพื่อติ๊กออก/เข้า
+              </p>
+              <p style={{ fontSize: '.72rem', color: 'var(--tx3)', margin: '6px 0 0', lineHeight: 1.6 }}>
+                💡 ชุดเดียวมีรูปหน้า+หลัง: ตั้งชื่อไฟล์ลงท้าย <b style={{ color: 'var(--tx2)' }}>_front</b> และ <b style={{ color: 'var(--tx2)' }}>_back</b> (เช่น dress01_front.jpg + dress01_back.jpg) ระบบจับคู่ให้เอง — ตอนเจนมุม Back จะใช้รูปด้านหลังเป็น ref อัตโนมัติ
               </p>
             </>
           )}
