@@ -1,4 +1,4 @@
-import { ipcMain, shell, app } from 'electron'
+import { ipcMain, shell, app, BrowserWindow } from 'electron'
 import electronUpdater from 'electron-updater'
 
 const { autoUpdater } = electronUpdater
@@ -34,7 +34,20 @@ export function initUpdater(getWin) {
     await autoUpdater.downloadUpdate()
     return { ok: true }
   })
-  ipcMain.handle('update:install', () => autoUpdater.quitAndInstall())
+  // ต้องบังคับปิดหน้าต่างเองก่อน quitAndInstall — ไม่งั้น NSIS ขึ้น "cannot be closed. Please close it manually"
+  // (บั๊กที่เจอจริงตอนทดสอบอัปเดตบน Windows v0.1.3)
+  ipcMain.handle('update:install', () => {
+    setImmediate(() => {
+      try {
+        app.removeAllListeners('window-all-closed')
+        for (const w of BrowserWindow.getAllWindows()) w.destroy()
+        autoUpdater.quitAndInstall(false, true)
+      } catch {
+        app.quit()
+      }
+    })
+    return { ok: true }
+  })
 
   // เช็คเงียบๆ หลังเปิดแอป (dev mode ไม่มี app-update.yml — เงียบไว้)
   setTimeout(() => autoUpdater.checkForUpdates().catch(() => {}), 5000)

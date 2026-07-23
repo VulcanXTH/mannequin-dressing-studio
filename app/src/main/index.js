@@ -25,6 +25,17 @@ function createWindow() {
   else win.loadFile(path.join(__dirname, '../renderer/index.html'))
 }
 
+// เปิดได้อินสแตนซ์เดียว — กันแอปซ้อนกันแล้วตัวติดตั้งอัปเดตปิดไม่ครบ
+if (!app.requestSingleInstanceLock()) {
+  app.quit()
+}
+app.on('second-instance', () => {
+  if (win && !win.isDestroyed()) {
+    if (win.isMinimized()) win.restore()
+    win.focus()
+  }
+})
+
 app.whenReady().then(() => {
   // เสิร์ฟไฟล์รูปในเครื่องให้ <img> ใน renderer (thumbnail grid)
   const thumbCache = new Map()

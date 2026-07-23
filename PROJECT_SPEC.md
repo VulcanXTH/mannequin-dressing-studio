@@ -193,6 +193,12 @@ QA อิสระบน Windows 11 จริง (รายงาน 3 ฉบั
 - sidebar แสดงเลขเวอร์ชันปัจจุบัน · settings:get ส่ง platform+version ให้ renderer
 - คู่มือเพิ่มหัวข้อ "การอัปเดตเวอร์ชันใหม่" ใน §1 แล้ว deploy แล้ว
 
+## 8.8 Fix ปุ่มติดตั้งอัปเดตบน Windows → v0.1.4 (20 ก.ค. 2026)
+
+- **บั๊กที่เจอจากทดสอบจริง:** กด "รีสตาร์ทและติดตั้งเลย" บน Windows → NSIS ขึ้น "cannot be closed. Please close it manually and click Retry" เพราะ `quitAndInstall()` ปิดแอปเก่าไม่สำเร็จ
+- **แก้:** ก่อน quitAndInstall → `removeAllListeners('window-all-closed')` + `destroy()` ทุกหน้าต่าง + `quitAndInstall(false, true)` · เพิ่ม `requestSingleInstanceLock()` กันแอปเปิดซ้อน (อินสแตนซ์ที่สองโฟกัสตัวแรกแทน)
+- **หมายเหตุ transition:** เครื่องที่ถือ v0.1.3 ตอนอัปไป 0.1.4 จะเจอกล่องนี้อีก 1 ครั้ง (โค้ดปิดแอปเป็นของเวอร์ชันเก่า) — ปิดแอปเองแล้วกด Retry ติดตั้งจบปกติ · จาก 0.1.4 เป็นต้นไป flow สะอาด
+
 ## 9. โครงสร้าง repo (ปัจจุบัน)
 
 - `index.html` — mockup ที่ deploy บน Vercel (project: `vulcanxs-projects/mannequin-dressing-studio`) — จะแยกออกจาก source ของแอปจริงเมื่อเริ่มเฟส 0 (แอปจริงอยู่ใน `app/`)
