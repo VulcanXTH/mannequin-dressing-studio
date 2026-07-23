@@ -1,9 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 export default function Settings({ config, onSaved, showToast }) {
   const [s, setS] = useState(config.settings)
   const [test1, setTest1] = useState(null)
   const [test2, setTest2] = useState(null)
+  const [upd, setUpd] = useState({ state: 'idle' })
+  const isMac = config.platform === 'darwin'
+
+  useEffect(() => {
+    const offs = [
+      window.api.on('update:available', (d) => setUpd({ state: 'available', version: d.version })),
+      window.api.on('update:progress', (d) => setUpd((p) => ({ ...p, state: 'downloading', percent: d.percent }))),
+      window.api.on('update:downloaded', () => setUpd((p) => ({ ...p, state: 'downloaded' }))),
+      window.api.on('update:error', (d) => setUpd({ state: 'error', message: d.message }))
+    ]
+    return () => offs.forEach((f) => f())
+  }, [])
+
+  const checkUpdate = async () => {
+    setUpd({ state: 'checking' })
+    const r = await window.api.invoke('update:check')
+    if (r.error) setUpd({ state: 'error', message: r.error })
+    else if (r.latest && r.latest !== r.current) setUpd({ state: 'available', version: r.latest })
+    else setUpd({ state: 'latest' })
+  }
 
   const save = async (patch) => {
     const next = { ...s, ...patch }
@@ -75,6 +95,40 @@ export default function Settings({ config, onSaved, showToast }) {
               <option value="0">ปกติ</option>
             </select>
           </div>
+        </div>
+
+        <div className="panel" style={{ gridColumn: '1 / -1' }}>
+          <p className="lbl">อัปเดตโปรแกรม — เวอร์ชันปัจจุบัน v{config.version}</p>
+          <div className="key-row" style={{ flexWrap: 'wrap' }}>
+            <button className="btn ghost" onClick={checkUpdate} disabled={upd.state === 'checking' || upd.state === 'downloading'}>
+              {upd.state === 'checking' ? 'กำลังเช็ค…' : 'เช็คเวอร์ชันใหม่'}
+            </button>
+            {upd.state === 'latest' && <span className="okmark">✓ เป็นเวอร์ชันล่าสุดแล้ว</span>}
+            {upd.state === 'error' && <span className="badmark" title={upd.message}>เช็คไม่สำเร็จ — ลองใหม่ภายหลัง</span>}
+            {upd.state === 'available' && (
+              <button
+                className="btn rose"
+                style={{ padding: '8px 16px', fontSize: '.84rem' }}
+                onClick={async () => {
+                  const r = await window.api.invoke('update:download')
+                  if (r.external) showToast('เปิดหน้าดาวน์โหลดแล้ว — โหลดไฟล์ .dmg แล้วติดตั้งทับได้เลย')
+                }}
+              >
+                {isMac ? `⬇ เปิดหน้าดาวน์โหลด v${upd.version}` : `⬇ ดาวน์โหลด v${upd.version}`}
+              </button>
+            )}
+            {upd.state === 'downloading' && <span className="okmark">กำลังดาวน์โหลด… {upd.percent || 0}%</span>}
+            {upd.state === 'downloaded' && (
+              <button className="btn rose" style={{ padding: '8px 16px', fontSize: '.84rem' }} onClick={() => window.api.invoke('update:install')}>
+                🔄 รีสตาร์ทและติดตั้งเลย
+              </button>
+            )}
+          </div>
+          <p style={{ fontSize: '.74rem', color: 'var(--tx3)', margin: '8px 0 0' }}>
+            {isMac
+              ? 'บน macOS (รุ่นไม่ได้ sign) ปุ่มจะเปิดหน้าดาวน์โหลด — โหลด .dmg แล้วลากติดตั้งทับตัวเดิมได้เลย ข้อมูลและตั้งค่าอยู่ครบ'
+              : 'บน Windows โปรแกรมดาวน์โหลดและติดตั้งเวอร์ชันใหม่ให้อัตโนมัติ — ข้อมูลและตั้งค่าอยู่ครบ · มีเวอร์ชันใหม่เมื่อไหร่จะมีแจ้งเตือนที่เมนูซ้ายเอง'}
+          </p>
         </div>
 
         <div className="panel" style={{ gridColumn: '1 / -1' }}>

@@ -26,7 +26,9 @@ export function registerIpc(db, qm, getWin) {
     settings: getSettings(db),
     prices: fal.PRICE_USD,
     pricesThb: fal.PRICE_THB,
-    promptDefaults: { prompt1: DEFAULT_PROMPT_1, prompt2: DEFAULT_PROMPT_2 }
+    promptDefaults: { prompt1: DEFAULT_PROMPT_1, prompt2: DEFAULT_PROMPT_2 },
+    platform: process.platform,
+    version: app.getVersion()
   }))
   h('settings:set', (patch) => setSettings(db, patch))
 

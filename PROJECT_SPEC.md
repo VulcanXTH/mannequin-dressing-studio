@@ -184,6 +184,15 @@ QA อิสระบน Windows 11 จริง (รายงาน 3 ฉบั
 - หมายเหตุ dev: การแพ็ก `--win` ทับ better-sqlite3 ใน node_modules เป็นไบนารี Windows — ก่อน `npm run dev` บน mac ให้รัน `npx electron-builder install-app-deps`
 - v0.1.2 ผ่าน mac dev smoke — **ยังไม่ retest บน Windows** (รวม v0.1.1 fixes ด้วย)
 
+## 8.7 ระบบอัปเดตในแอป → v0.1.3 (20 ก.ค. 2026)
+
+- **electron-updater (GitHub provider)**: เช็คเวอร์ชันใหม่อัตโนมัติหลังเปิดแอป 5 วิ + ปุ่มเช็คเองใน ตั้งค่า → อัปเดตโปรแกรม + แจ้งเตือนที่เมนูซ้าย (⬆ เวอร์ชันใหม่)
+- **Windows**: ดาวน์โหลด (แสดง %) + "รีสตาร์ทและติดตั้งเลย" จบในแอป — ทำงานได้แม้ unsigned
+- **macOS unsigned ติดตั้งทับอัตโนมัติไม่ได้** → ปุ่มเปิดหน้า GitHub Releases ให้โหลด .dmg ติดตั้งทับเอง (ถ้าอยากได้ 1-click ต้อง Apple Developer $99/ปี + code signing)
+- **การ release ตั้งแต่ v0.1.3**: ต้อง publish ผ่าน electron-builder เพื่อให้มี `latest.yml`/`latest-mac.yml` ที่ updater ใช้ — `GH_TOKEN=$(gh auth token) npx electron-builder --mac --publish always && npx electron-builder --win --x64 --publish always` (ห้ามอัป asset ด้วย gh CLI อย่างเดียว)
+- sidebar แสดงเลขเวอร์ชันปัจจุบัน · settings:get ส่ง platform+version ให้ renderer
+- คู่มือเพิ่มหัวข้อ "การอัปเดตเวอร์ชันใหม่" ใน §1 แล้ว deploy แล้ว
+
 ## 9. โครงสร้าง repo (ปัจจุบัน)
 
 - `index.html` — mockup ที่ deploy บน Vercel (project: `vulcanxs-projects/mannequin-dressing-studio`) — จะแยกออกจาก source ของแอปจริงเมื่อเริ่มเฟส 0 (แอปจริงอยู่ใน `app/`)

@@ -17,6 +17,7 @@ export default function App() {
   const [batchId, setBatchId] = useState(null)
   const [editorJobId, setEditorJobId] = useState(null)
   const [toast, setToast] = useState(null)
+  const [updateVersion, setUpdateVersion] = useState(null)
 
   const reloadConfig = useCallback(async () => {
     setConfig(await window.api.invoke('settings:get'))
@@ -27,6 +28,7 @@ export default function App() {
     window.api.invoke('batches:list').then((bs) => {
       if (bs.length) setBatchId(bs[0].id)
     })
+    return window.api.on('update:available', (d) => setUpdateVersion(d.version))
   }, [reloadConfig])
 
   const showToast = useCallback((msg) => {
@@ -50,10 +52,17 @@ export default function App() {
             {label}
           </button>
         ))}
+        {updateVersion && (
+          <button className="nav" style={{ color: 'var(--ok)', fontWeight: 600 }} onClick={() => setScreen('set')}>
+            ⬆ เวอร์ชันใหม่ v{updateVersion}
+          </button>
+        )}
         <div className="side-foot">
           API Key 1 {settings.apiKey1 ? <b>● พร้อมใช้</b> : <span style={{ color: 'var(--bad)' }}>○ ยังไม่ได้ใส่</span>}
           <br />
           API Key 2 {settings.apiKey2 ? <b>● พร้อมใช้</b> : <span>○ ไม่ได้ใช้</span>}
+          <br />
+          <span style={{ color: 'var(--tx3)' }}>v{config.version}</span>
         </div>
       </nav>
       <main className="main">

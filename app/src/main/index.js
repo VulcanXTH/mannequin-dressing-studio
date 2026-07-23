@@ -5,6 +5,7 @@ import { initDb } from './db'
 import { registerIpc } from './ipc'
 import { QueueManager } from './queueManager'
 import { prepareImage } from './falClient'
+import { initUpdater } from './updater'
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'media', privileges: { stream: true } }])
 
@@ -49,6 +50,7 @@ app.whenReady().then(() => {
   registerIpc(db, qm, () => win)
   createWindow()
   qm.start()
+  initUpdater(() => win)
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

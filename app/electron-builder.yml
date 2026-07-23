@@ -13,3 +13,8 @@ win:
 nsis:
   oneClick: true
 npmRebuild: true
+publish:
+  provider: github
+  owner: VulcanXTH
+  repo: mannequin-dressing-studio
+  releaseType: release
