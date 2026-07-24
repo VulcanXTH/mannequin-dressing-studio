@@ -1,10 +1,10 @@
 @echo off
 chcp 65001 >nul
 setlocal enabledelayedexpansion
-title Mannequin Dressing Studio - ตัวช่วยแก้ปัญหาติดตั้ง (v0.1.5)
+title Mannequin Dressing Studio - ตัวช่วยแก้ปัญหาติดตั้ง (v0.1.6)
 
-set "EXPECTED_SIZE=102866316"
-set "VER=0.1.5"
+set "EXPECTED_SIZE=102860913"
+set "VER=0.1.6"
 set "DIR=%LOCALAPPDATA%\Programs\mannequin-dressing-studio"
 set "SETUP=%TEMP%\MannequinStudio-Setup-%VER%.exe"
 set "URL=https://github.com/VulcanXTH/mannequin-dressing-studio/releases/download/v%VER%/Mannequin-Dressing-Studio-Setup-%VER%.exe"

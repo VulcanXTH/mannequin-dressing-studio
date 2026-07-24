@@ -193,6 +193,31 @@ QA อิสระบน Windows 11 จริง (รายงาน 3 ฉบั
 - sidebar แสดงเลขเวอร์ชันปัจจุบัน · settings:get ส่ง platform+version ให้ renderer
 - คู่มือเพิ่มหัวข้อ "การอัปเดตเวอร์ชันใหม่" ใน §1 แล้ว deploy แล้ว
 
+## 8.9 ROOT CAUSE จริงของ "cannot be closed" → v0.1.6 (24 ก.ค. 2026)
+
+**สาเหตุที่แท้จริง อยู่ในโค้ดของ electron-builder เอง** (`templates/nsis/include/allowOnlyOneInstallerInstance.nsh` → `_CHECK_APP_RUNNING`):
+
+```nsis
+nsExec::Exec `"$SYSDIR\cmd.exe" /c taskkill /im "${APP_EXECUTABLE_FILENAME}" /fi "PID ne $pid" ...`
+```
+
+**ไม่มี `/F`** — เป็นการ "ขอ" ให้แอปปิด ไม่ได้บังคับ ถ้าแอปไม่ยอมปิด (Electron ที่มีงานค้าง/หน้าต่างไม่ตอบสนอง) จะเด้ง `MessageBox` "cannot be closed … click Retry" วนไม่จบ — เกิดได้ทั้งตอนติดตั้งและ**ตอนถอนการติดตั้ง** (`uninstaller.nsh` เรียก `CHECK_APP_RUNNING` เหมือนกัน)
+
+ทำไม v0.1.4/v0.1.5 ยังไม่หาย:
+- v0.1.4 แก้เฉพาะฝั่งแอป (`destroy()` หน้าต่างก่อน `quitAndInstall`) — ไม่แตะการเช็คของ NSIS
+- v0.1.5 เพิ่ม `customInit` ที่เรียก `taskkill` **แบบไม่ระบุ path** (`nsExec::Exec` ใช้ CreateProcess ตรง ๆ อาจหา taskkill ไม่เจอ) และถึงทำงานได้ก็ยังไม่ปิด `_CHECK_APP_RUNNING` ทิ้ง
+
+**v0.1.6 — override การเช็คทั้งหมด** ผ่าน hook `customCheckAppRunning` (electron-builder รองรับผ่าน `!ifmacrodef` ใน `CHECK_APP_RUNNING` ซึ่งครอบทั้ง installer และ uninstaller):
+- ปิดแอปแบบบังคับ `taskkill /F /IM` ผ่าน `"$SYSDIR\cmd.exe"` (ตาม pattern ของ template เอง) ยิง 2 รอบ + หน่วงให้ Windows ปล่อย file handle
+- **ห้ามใช้ `/T`** — ตอนอัปเดตจากปุ่มในแอป ตัวติดตั้งเป็น child ของแอป จะฆ่าตัวเองตาย · ไม่จำเป็นอยู่แล้วเพราะ Electron helper บน Windows ใช้ชื่อ exe เดียวกัน `/IM` กวาดครบ
+- ไม่มี dialog ให้ผู้ใช้กด Retry อีกต่อไป
+
+**พิสูจน์ว่า include ทำงานจริง:** ใส่ `!error` ชั่วคราวใน `build/installer.nsh` แล้ว build ล้มพร้อม error นั้น = ไฟล์ถูกคอมไพล์เข้า installer แน่นอน (วิธีตรวจ: `strings` ใช้ไม่ได้เพราะ NSIS บีบอัดสคริปต์)
+
+**อีกปัญหาที่เจอบนเครื่องลูกค้าเดียวกัน:** กด Uninstall v0.1.1 แล้วขึ้น `NSIS Error: Installer integrity check has failed` = ไฟล์ uninstaller เสียหาย (เครื่องมี **McAfee** — น่าจะกักกัน/ดัดแปลง exe ที่ไม่ได้ sign) → `tools/fix-reinstall.bat` เลยเปลี่ยนไปลบเองแบบ manual (โฟลเดอร์ + shortcut + registry) ไม่พึ่ง uninstaller เลย และตรวจขนาดไฟล์ที่โหลดมาว่าครบไหม (กัน AV ตัดไฟล์)
+
+> ข้อเสนอระยะยาว: ปัญหากลุ่มนี้ (AV กัดไฟล์ · SmartScreen · uninstaller เสีย) รากเดียวกันคือแอปไม่ได้ code sign — ถ้าจะแจกหลายเครื่องควรซื้อ Windows code signing certificate
+
 ## 8.8 Fix ปุ่มติดตั้งอัปเดตบน Windows → v0.1.4 (20 ก.ค. 2026)
 
 - **บั๊กที่เจอจากทดสอบจริง:** กด "รีสตาร์ทและติดตั้งเลย" บน Windows → NSIS ขึ้น "cannot be closed. Please close it manually and click Retry" เพราะ `quitAndInstall()` ปิดแอปเก่าไม่สำเร็จ
