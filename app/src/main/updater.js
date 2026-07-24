@@ -1,4 +1,4 @@
-import { ipcMain, shell, app, BrowserWindow } from 'electron'
+import { ipcMain, shell, app } from 'electron'
 import electronUpdater from 'electron-updater'
 
 const { autoUpdater } = electronUpdater
@@ -34,18 +34,12 @@ export function initUpdater(getWin) {
     await autoUpdater.downloadUpdate()
     return { ok: true }
   })
-  // ต้องบังคับปิดหน้าต่างเองก่อน quitAndInstall — ไม่งั้น NSIS ขึ้น "cannot be closed. Please close it manually"
-  // (บั๊กที่เจอจริงตอนทดสอบอัปเดตบน Windows v0.1.3)
+  // ให้ electron-updater จัดการปิดแอปเอง — quitAndInstall ปิดทุกหน้าต่าง + emit before-quit-for-update + app.quit() อยู่แล้ว
+  // isSilent=true คือตัวแก้จริงของ dialog "cannot be closed / Retry": ตัวติดตั้ง NSIS จะ auto-ตอบ MessageBox
+  // ด้วยค่า /SD default แทนที่จะบล็อกรอคนกด + ทำให้ isForceRunAfter (relaunch) มีผลจริง
+  // (การ destroy() หน้าต่างเองไม่ช่วย เพราะ NSIS เช็คจาก process ในโฟลเดอร์ติดตั้ง ไม่ใช่หน้าต่าง — root-caused จาก source electron-builder, QA 20 ก.ค. 2026)
   ipcMain.handle('update:install', () => {
-    setImmediate(() => {
-      try {
-        app.removeAllListeners('window-all-closed')
-        for (const w of BrowserWindow.getAllWindows()) w.destroy()
-        autoUpdater.quitAndInstall(false, true)
-      } catch {
-        app.quit()
-      }
-    })
+    setImmediate(() => autoUpdater.quitAndInstall(true, true)) // (isSilent, isForceRunAfter)
     return { ok: true }
   })
 

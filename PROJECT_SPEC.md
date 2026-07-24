@@ -199,6 +199,23 @@ QA อิสระบน Windows 11 จริง (รายงาน 3 ฉบั
 - **แก้:** ก่อน quitAndInstall → `removeAllListeners('window-all-closed')` + `destroy()` ทุกหน้าต่าง + `quitAndInstall(false, true)` · เพิ่ม `requestSingleInstanceLock()` กันแอปเปิดซ้อน (อินสแตนซ์ที่สองโฟกัสตัวแรกแทน)
 - **หมายเหตุ transition:** เครื่องที่ถือ v0.1.3 ตอนอัปไป 0.1.4 จะเจอกล่องนี้อีก 1 ครั้ง (โค้ดปิดแอปเป็นของเวอร์ชันเก่า) — ปิดแอปเองแล้วกด Retry ติดตั้งจบปกติ · จาก 0.1.4 เป็นต้นไป flow สะอาด
 
+## 8.9 v0.1.4 fix ยัง**ไม่ถูกจุด** → root-cause จริง + v0.1.5 (20 ก.ค. 2026)
+
+ลูกค้าเจอกล่อง "cannot be closed" อีกบน Windows แม้ v0.1.4 — สืบด้วย 5 agent (Codex + Claude 4 ตัว) อ่าน source electron-builder จริง พบว่า fix v0.1.4 **ผิด layer**:
+- `win.destroy()` ไม่ฆ่า process (main/GPU/helper/crashpad) — NSIS `_CHECK_APP_RUNNING` เช็คจาก **process ในโฟลเดอร์ติดตั้ง** ไม่ใช่หน้าต่าง → destroy หน้าต่างไม่ช่วย ซ้ำขยาย race
+- `quitAndInstall(false, true)`: `isSilent=false` ทำให้ NSIS MessageBox **บล็อกรอคนกด** = ตัว dialog เอง + `isForceRunAfter` ถูกทิ้งเงียบๆ ตอน isSilent=false
+
+**v0.1.5 แก้ทั้ง 2 path (2 กลไกแยกกัน):**
+| path | fix |
+|---|---|
+| Manual double-click Setup (ไม่มี `--updated` → NSIS โชว์ prompt) | `app/build/installer.nsh` customInit `taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"` + `nsis.include` ใน electron-builder.yml — ฆ่า process tree ก่อนตัวเช็คทำงาน |
+| In-app updater (มี `--updated` → NSIS force-kill) | `quitAndInstall(true, true)` (silent) → NSIS auto-ตอบ MessageBox ด้วย /SD default ไม่บล็อก + relaunch ได้จริง · เลิก destroy หน้าต่างเอง ปล่อยให้ electron-updater คุม shutdown |
+| hardening (ทั้งคู่) | `QueueManager.stop()` เคลียร์ timers ตอน `before-quit` — main process ออกเร็ว ไม่ค้างให้ตัวติดตั้งวน kill |
+
+- ยืนยัน shortcut `CodexSandboxOffline` = artifact จาก sandbox ล้วน ไม่ใช่บั๊ก (per-user install ฝัง path ของ user ที่ติดตั้ง — ปกติ)
+- installer.nsh ใช้ `${APP_EXECUTABLE_FILENAME}` ไม่ hardcode ชื่อ (มีเว้นวรรค) · ref: electron-builder issue #9593, #6409, NsisUpdater.ts/BaseUpdater.ts source
+- คู่มือ §8 เพิ่ม 2 แถว + callout เรื่องกล่องนี้ · **release ตั้งแต่ v0.1.5 ยังไม่ได้ retest บน Windows จริง — ต้องเทสต์เคส B (ติดตั้งทับขณะแอปเปิด) ซ้ำหลายรอบเพราะเป็น race**
+
 ## 9. โครงสร้าง repo (ปัจจุบัน)
 
 - `index.html` — mockup ที่ deploy บน Vercel (project: `vulcanxs-projects/mannequin-dressing-studio`) — จะแยกออกจาก source ของแอปจริงเมื่อเริ่มเฟส 0 (แอปจริงอยู่ใน `app/`)

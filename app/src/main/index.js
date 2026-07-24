@@ -63,6 +63,9 @@ app.whenReady().then(() => {
   qm.start()
   initUpdater(() => win)
 
+  // ปิด queue polling ก่อนแอปออก — ให้ process จบเร็ว (สำคัญตอนอัปเดต ไม่ให้ตัวติดตั้งเจอ process ค้าง)
+  app.on('before-quit', () => qm.stop())
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })

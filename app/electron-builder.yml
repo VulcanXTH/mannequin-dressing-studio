@@ -12,6 +12,8 @@ win:
   target: nsis
 nsis:
   oneClick: true
+  perMachine: false
+  include: build/installer.nsh
 npmRebuild: true
 publish:
   provider: github

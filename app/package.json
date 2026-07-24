@@ -1,7 +1,7 @@
 {
   "name": "mannequin-dressing-studio",
   "productName": "Mannequin Dressing Studio",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Bulk mannequin try-on image generator (GPT-Image-2 via FAL.AI)",
   "main": "./out/main/index.js",
   "author": "VulcanX",

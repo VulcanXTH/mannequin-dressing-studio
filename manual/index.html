@@ -87,7 +87,7 @@
   <div class="kicker">User Manual · คู่มือการใช้งานฉบับละเอียด</div>
   <h1>Mannequin Dressing Studio</h1>
   <p>โปรแกรมเจนภาพหุ่นลองชุดแบบ Bulk ด้วย AI (GPT-Image-2 ผ่าน FAL.AI) — ใส่รูปหุ่น 1 รูป + โฟลเดอร์รูปเสื้อผ้า ได้ภาพหุ่นตัวเดิมใส่เสื้อผ้าทุกชิ้น พร้อมเครื่องมือแก้รูปครบชุด</p>
-  <div class="meta">เวอร์ชัน 0.1.4 · กรกฎาคม 2026 · รองรับ macOS (Apple Silicon) และ Windows 10/11 (64-bit)
+  <div class="meta">เวอร์ชัน 0.1.5 · กรกฎาคม 2026 · รองรับ macOS (Apple Silicon) และ Windows 10/11 (64-bit)
     · <a href="quick.html" style="color:var(--rose)">Quick Guide</a>
     · <a href="คู่มือการใช้งาน-Mannequin-Dressing-Studio.pdf" style="color:var(--rose)">ดาวน์โหลด PDF</a></div>
 </header>
@@ -218,8 +218,11 @@
     <tr><td>สีผลลัพธ์เพี้ยนจากเสื้อจริง</td><td>เปิดรูปใน Editor → กด Match Color (฿1.5) — ระบบเทียบกับรูปต้นฉบับให้อัตโนมัติ</td></tr>
     <tr><td>รูปหุ่น/ผลลัพธ์เอียงหรือกลับหัว</td><td>ไม่ควรเกิด (ระบบแก้ EXIF ให้แล้ว) — ถ้าเจอ ให้เปิดรูปต้นทางในโปรแกรมดูรูปแล้ว export เป็น JPG ใหม่ก่อนใช้ และแจ้งทีมงาน</td></tr>
     <tr><td>อยากรู้ว่าไฟล์ผลอยู่ไหน</td><td>โฟลเดอร์ที่เลือกไว้ในขั้นตอนที่ 4 ของหน้าสร้างภาพ — ไฟล์เข้าทันทีที่แต่ละรูปเสร็จ</td></tr>
+    <tr><td>อัปเดตแล้วขึ้นกล่อง <b>"Mannequin Dressing Studio cannot be closed. Please close it manually and click Retry"</b></td><td>กด <b>Ctrl + Shift + Esc</b> เปิด Task Manager → แท็บ <b>Details</b> → หาแถวชื่อ <b>Mannequin Dressing Studio.exe</b> (มีหลายแถว = ปกติ) → กด <b>End task</b> ให้ครบทุกแถว → กลับไปกด <b>Retry</b> ที่ตัวติดตั้ง / ถ้ายังไม่หาย: กด Cancel → รีสตาร์ทเครื่อง → เปิดไฟล์ Setup ก่อนค่อยเปิดโปรแกรม — ข้อมูลและการตั้งค่าไม่หาย</td></tr>
+    <tr><td>กด Start Menu แล้วโปรแกรมไม่เปิด (หลังอัปเดต)</td><td>เปิด File Explorer (Windows + E) → พิมพ์ที่ช่องบน <code>%LOCALAPPDATA%\Programs\mannequin-dressing-studio</code> แล้ว Enter → ดับเบิลคลิก <b>Mannequin Dressing Studio.exe</b> → คลิกขวา <b>Pin to Start / Pin to taskbar</b> ไว้ใช้ครั้งต่อไป</td></tr>
   </tbody>
 </table>
+<div class="callout warn"><b>ℹ เกี่ยวกับกล่อง "cannot be closed" ตอนอัปเดต</b>กล่องนี้เกิดเฉพาะตอน<b>อัปเดตทับจากเวอร์ชันเก่า</b>ในบางเครื่อง เพราะโปรแกรมเดิมยังปิดไม่สนิทตอนตัวติดตั้งทำงาน ตั้งแต่เวอร์ชัน 0.1.5 เป็นต้นไประบบจะปิดโปรแกรมเก่าให้อัตโนมัติก่อนติดตั้ง จึง<b>ไม่เจออีก</b> — ถ้ายังเจอในการอัปจากเวอร์ชันเก่ามากๆ ครั้งเดียว ให้ทำตามวิธีในตารางด้านบน (ปิดโปรแกรมใน Task Manager แล้วกด Retry) ข้อมูลและการตั้งค่าทั้งหมดยังอยู่ครบเสมอ</div>
 
 <h2 id="price"><span class="no">9</span>สรุปราคาและความเร็ว</h2>
 <div class="price-strip">
@@ -237,7 +240,7 @@
 </table>
 <p style="font-size:.8rem;color:var(--ink3)">* ความเร็วเป็นค่าโดยประมาณ ขึ้นกับความหนาแน่นของระบบ AI ฝั่ง FAL ในช่วงเวลานั้น (ค่าที่วัดจริงระหว่างทดสอบอยู่ที่ 12–20 รูป/นาที) · ราคาอ้างอิง $0.005 / $0.042 ต่อรูป — ขนาดภาพผลลัพธ์แปรตามสัดส่วนรูปหุ่น (ราวๆ 1024–1536px) · อัตราแลกเปลี่ยนอ้างอิง ~36฿/$ · ค่าใช้จ่ายเรียกเก็บผ่านบัญชี fal.ai ของคุณโดยตรง</p>
 
-<footer>Mannequin Dressing Studio v0.1.4 — คู่มือการใช้งาน · กรกฎาคม 2026 · มีปัญหาการใช้งานติดต่อทีมพัฒนา</footer>
+<footer>Mannequin Dressing Studio v0.1.5 — คู่มือการใช้งาน · กรกฎาคม 2026 · มีปัญหาการใช้งานติดต่อทีมพัฒนา</footer>
 </div>
 </body>
 </html>

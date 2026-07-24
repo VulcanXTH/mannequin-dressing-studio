@@ -27,8 +27,17 @@ export class QueueManager {
     this.db.prepare(`UPDATE jobs SET status='queued', next_at=0 WHERE status='uploading'`).run()
     // งานที่ crash กลางการเซฟไฟล์ — มี request_id แล้ว กลับไป poll ต่อ
     this.db.prepare(`UPDATE jobs SET status='running' WHERE status='saving'`).run()
-    setInterval(() => this.tick().catch((e) => console.error('tick', e)), 1500)
-    setInterval(() => this.poll().catch((e) => console.error('poll', e)), 2500)
+    this._timers = [
+      setInterval(() => this.tick().catch((e) => console.error('tick', e)), 1500),
+      setInterval(() => this.poll().catch((e) => console.error('poll', e)), 2500)
+    ]
+  }
+
+  // หยุด polling ตอนแอปกำลังปิด (เช่น ตอนอัปเดต) — ให้ main process ออกเร็ว ไม่ค้างให้ตัวติดตั้งต้องวน kill
+  stop() {
+    this.paused = true
+    if (this._timers) this._timers.forEach(clearInterval)
+    this._timers = null
   }
 
   keys(settings) {
