@@ -89,17 +89,26 @@ export function registerIpc(db, qm, getWin) {
       .run(now, mannequinPath, folderName, outputFolder, quality, JSON.stringify(views), width, height, promptId, template)
     const batchId = info.lastInsertRowid
 
-    const ins = db.prepare(`INSERT INTO jobs(batch_id,kind,garment_path,view,quality,prompt,base_image,created_at)
-                            VALUES(?,?,?,?,?,?,?,?)`)
+    const ins = db.prepare(`INSERT INTO jobs(batch_id,kind,garment_path,view,quality,prompt,base_image,created_at,ref2_path)
+                            VALUES(?,?,?,?,?,?,?,?,?)`)
     const tx = db.transaction(() => {
       for (const g of garments)
         for (const view of views) {
-          // ชุดที่มีรูปหลังแยก (_back): มุม Back ใช้รูปหลังเป็น ref แทน
+          // ชุดที่มีรูปคู่ _front/_back:
+          //  - มุม Back → ใช้รูปหลังเป็น ref หลัก + แนบรูปหน้าเป็น ref เสริม (กระจกสะท้อนด้านหน้า)
+          //  - มุม Front/Side → ใช้รูปหน้า + แนบรูปหลังเป็น ref เสริม (กระจกสะท้อนด้านหลัง)
+          // กันปัญหา "AI เดาด้านที่มองไม่เห็นเอง" ทำให้เงากระจกไม่ตรงกับชุดจริง
           const useBackRef = view === 'back' && g.backPath
           const gp = useBackRef ? g.backPath : g.path
+          const ref2 = g.backPath ? (useBackRef ? g.path : g.backPath) : null
           let prompt = buildPrompt({ template, mannequinName: path.basename(mannequinPath), folderName, view })
-          if (useBackRef) prompt += ' The reference image shows the back side of the garment.'
-          ins.run(batchId, 'generate', gp, view, quality, prompt, 'mannequin', now)
+          if (useBackRef) prompt += ' The main garment reference image shows the back side of the garment.'
+          if (ref2) {
+            prompt += useBackRef
+              ? ' The last reference image shows the front side of the same garment — use it to render the garment accurately wherever the front is visible, including in any mirror reflection.'
+              : ' The last reference image shows the back side of the same garment — use it to render the garment accurately wherever the back is visible, including in any mirror reflection. The mirror reflection must be physically consistent with the garment shown in the references.'
+          }
+          ins.run(batchId, 'generate', gp, view, quality, prompt, 'mannequin', now, ref2)
         }
     })
     tx()
@@ -134,9 +143,9 @@ export function registerIpc(db, qm, getWin) {
   h('job:regenHigh', ({ jobId }) => {
     const j = db.prepare(`SELECT * FROM jobs WHERE id=?`).get(jobId)
     if (!j) return null
-    db.prepare(`INSERT INTO jobs(batch_id,kind,garment_path,view,quality,prompt,base_image,parent_job_id,created_at)
-                VALUES(?,?,?,?,?,?,?,?,?)`)
-      .run(j.batch_id, 'regen_high', j.garment_path, j.view, 'high', j.prompt, 'mannequin', j.id, Date.now())
+    db.prepare(`INSERT INTO jobs(batch_id,kind,garment_path,view,quality,prompt,base_image,parent_job_id,created_at,ref2_path)
+                VALUES(?,?,?,?,?,?,?,?,?,?)`)
+      .run(j.batch_id, 'regen_high', j.garment_path, j.view, 'high', j.prompt, 'mannequin', j.id, Date.now(), j.ref2_path)
     qm.notify()
     return { ok: true }
   })

@@ -111,10 +111,13 @@ export class QueueManager {
       }
     }
     const garmentUrl = await this.cachedUpload(key, job.garment_path)
+    // รูปอีกด้านของชุด (ถ้ามีคู่ _front/_back) — ช่วยให้เงากระจก/ด้านที่มองไม่เห็นตรงกับชุดจริง
+    const refUrls = [baseUrl, garmentUrl]
+    if (job.ref2_path) refUrls.push(await this.cachedUpload(key, job.ref2_path))
 
     const input = {
       prompt: job.prompt,
-      image_urls: [baseUrl, garmentUrl],
+      image_urls: refUrls,
       image_size: { width: batch.width, height: batch.height },
       quality: fal.QUALITY_MAP[job.quality] || 'low',
       num_images: 1,

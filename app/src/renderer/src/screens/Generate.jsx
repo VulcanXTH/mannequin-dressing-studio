@@ -156,7 +156,7 @@ export default function Generate({ config, onStarted, showToast }) {
                 เลือกแล้ว <b style={{ color: 'var(--tx)' }}>{selected.length} / {groups.length} ชุด</b> · คลิกรูปเพื่อติ๊กออก/เข้า
               </p>
               <p style={{ fontSize: '.72rem', color: 'var(--tx3)', margin: '6px 0 0', lineHeight: 1.6 }}>
-                💡 ชุดเดียวมีรูปหน้า+หลัง: ตั้งชื่อไฟล์ลงท้าย <b style={{ color: 'var(--tx2)' }}>_front</b> และ <b style={{ color: 'var(--tx2)' }}>_back</b> (เช่น dress01_front.jpg + dress01_back.jpg) ระบบจับคู่ให้เอง — ตอนเจนมุม Back จะใช้รูปด้านหลังเป็น ref อัตโนมัติ
+                💡 ชุดเดียวมีรูปหน้า+หลัง: ตั้งชื่อไฟล์ลงท้าย <b style={{ color: 'var(--tx2)' }}>_front</b> และ <b style={{ color: 'var(--tx2)' }}>_back</b> (เช่น dress01_front.jpg + dress01_back.jpg) ระบบจับคู่ให้เอง — มุม Back ใช้รูปหลังเป็น ref และ<b style={{ color: 'var(--tx2)' }}>ทุกมุมจะแนบรูปอีกด้านไปด้วย เพื่อให้เงาในกระจกตรงกับชุดจริง</b>
               </p>
             </>
           )}

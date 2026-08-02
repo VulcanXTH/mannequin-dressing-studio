@@ -48,6 +48,12 @@ export function initDb(dir) {
     CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
     CREATE INDEX IF NOT EXISTS idx_jobs_batch ON jobs(batch_id);
   `)
+  // migration v0.1.7: รูปอ้างอิงใบที่สอง (อีกด้านของชุด) สำหรับ ground เงากระจก
+  try {
+    db.exec('ALTER TABLE jobs ADD COLUMN ref2_path TEXT')
+  } catch {
+    /* column exists */
+  }
   return db
 }
 
