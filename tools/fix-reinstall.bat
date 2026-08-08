@@ -1,6 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
-title Mannequin Dressing Studio - Repair and Reinstall (v0.1.6)
+title Mannequin Dressing Studio - Repair and Reinstall (v0.1.7)
 
 REM ============================================================
 REM  IMPORTANT: keep this file 100%% plain ASCII.
@@ -8,8 +8,8 @@ REM  cmd.exe parses .bat files using the machine's OEM codepage,
 REM  so Thai/UTF-8 text here gets mangled and breaks every line.
 REM ============================================================
 
-set "EXPECTED_SIZE=102860913"
-set "VER=0.1.6"
+set "EXPECTED_SIZE=102861084"
+set "VER=0.1.7"
 set "DIR=%LOCALAPPDATA%\Programs\mannequin-dressing-studio"
 set "DATA=%APPDATA%\mannequin-dressing-studio"
 set "SETUP=%TEMP%\MannequinStudio-Setup-%VER%.exe"

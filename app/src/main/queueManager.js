@@ -182,7 +182,13 @@ export class QueueManager {
     if (!job) return
     const attempts = job.attempts + 1
     const maxRetries = s ? s.autoRetry : 2
-    const msg = String((err && err.message) || err).slice(0, 500)
+    // ดึงรายละเอียดจาก API error body มาแสดง — "Forbidden" เฉยๆ ผู้ใช้แก้เองไม่ถูก
+    let msg = String((err && err.message) || err)
+    const detail = err && err.body && err.body.detail
+    if (detail) msg += ' — ' + (typeof detail === 'string' ? detail : JSON.stringify(detail))
+    if (err && err.status === 403) msg += ' · เครดิต FAL อาจหมดหรือ key ถูกระงับ — เช็คยอดที่ fal.ai/dashboard/billing แล้วกด Retry'
+    if (err && err.status === 401) msg += ' · API key ไม่ถูกต้อง — เช็คที่หน้าตั้งค่า'
+    msg = msg.slice(0, 500)
     if (attempts <= maxRetries) {
       const delay = RETRY_DELAYS[Math.min(attempts - 1, RETRY_DELAYS.length - 1)]
       this.db
